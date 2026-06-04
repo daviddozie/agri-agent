@@ -10,19 +10,19 @@ load_dotenv(Path(__file__).parent / ".env")
 
 from agent import build_analysis_agent
 
-# ── Page config ───────────────────────────────────────────────────────
+# Page config
 st.set_page_config(
     page_title="Agri Agent Diagnostic Dashboard",
     page_icon="🌱",
     layout="wide",
 )
 
-# ── Header ────────────────────────────────────────────────────────────
+# Header
 st.title("🌱 Agricultural Agent Diagnostic Dashboard")
 st.caption("Hierarchical Log Persistence and Graph Knowledge Mapping — Stage 3")
 st.divider()
 
-# ── Session state ─────────────────────────────────────────────────────
+# Session state
 if "agent" not in st.session_state:
     with st.spinner("Initialising Log Analysis Agent..."):
         st.session_state.agent = build_analysis_agent()
@@ -37,11 +37,11 @@ if "last_chart_path" not in st.session_state:
     st.session_state.last_chart_path = None
 
 
-# ── Layout: two columns ───────────────────────────────────────────────
+# Layout: two columns
 left_col, right_col = st.columns([2, 1])
 
 
-# ── Left column: chat interface ───────────────────────────────────────
+# Left column: chat interface
 with left_col:
     st.subheader("💬 Natural Language Analysis Interface")
     st.caption(
