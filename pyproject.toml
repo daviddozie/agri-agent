@@ -1,0 +1,10 @@
+[project]
+name = "agri-agent"
+version = "0.1.0"
+description = "Multi-agent diagnostic system with vector log store, Neo4j graph mapping, and Streamlit dashboard."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+[tool.uv]
+workspace = { members = ["mcp_server", "agent_client", "analysis_dashboard"] }

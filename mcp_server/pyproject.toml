@@ -1,0 +1,10 @@
+[project]
+name = "mcp-server"
+version = "0.1.0"
+description = "FastMCP agricultural advisory server, CRAG resource and reflection tool."
+requires-python = ">=3.14"
+dependencies = [
+    "fastmcp>=3.4.0",
+    "python-dotenv>=1.2.2",
+    "tavily-python>=0.7.25",
+]

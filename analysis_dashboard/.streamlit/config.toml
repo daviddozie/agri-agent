@@ -1,0 +1,3 @@
+[server]
+# Avoid scanning lazy-loaded transformers modules that trigger optional torchvision imports.
+fileWatcherType = "none"
