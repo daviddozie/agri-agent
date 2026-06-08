@@ -122,3 +122,66 @@ By integrating multiple practices tailored to specific local conditions, farmers
 [2026-06-04 15:06:58] [CLIENT] [INFO] MCP session initialised, sampling handler and log handler registered
 [2026-06-04 15:06:58] [CLIENT] [INFO] Agent ready. Sending query...
 [2026-06-04 15:07:03] [CLIENT] [ERROR] Agent execution failed: Error code: 402 - {'error': {'message': 'This request requires more credits, or fewer max_tokens. You requested up to 2048 tokens, but can only afford 2039. To increase, visit https://openrouter.ai/settings/credits and upgrade to a paid account', 'code': 402, 'metadata': {'provider_name': None}}, 'user_id': 'user_34qSWXKig8C9bfaKkg5A7X0odpa'}
+[2026-06-08 07:44:03] [CLIENT] [INFO] Agent started. Session: eec000a3-2203-4f36-a06b-8774bae40d5a | Query: 'How can I improve soil fertility for maize?'
+[2026-06-08 07:44:03] [CLIENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-08 07:44:04] [CLIENT] [INFO] MCP session initialised, sampling handler and log handler registered
+[2026-06-08 07:44:04] [CLIENT] [INFO] Agent ready. Sending query...
+[2026-06-08 07:44:07] [CLIENT] [INFO] Querying CRAG resource with: 'improve soil fertility for maize'
+[2026-06-08 07:44:07] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:09] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:09] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:11] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:11] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:12] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:12] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:14] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:14] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:15] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:15] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:16] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:16] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:18] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:20] [CLIENT] [INFO] CRAG resource response received
+[2026-06-08 07:44:27] [CLIENT] [INFO] Calling remote reflection tool on MCP server...
+[2026-06-08 07:44:27] [CLIENT] [INFO] {'msg': "Reflection tool invoked for query: 'How can I improve soil fertility for maize?'", 'extra': None}
+[2026-06-08 07:44:27] [CLIENT] [INFO] {'msg': 'Initiating critique loop via MCP Sampling...', 'extra': None}
+[2026-06-08 07:44:27] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:29] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:29] [CLIENT] [INFO] {'msg': 'Critique sample received from client LLM', 'extra': None}
+[2026-06-08 07:44:29] [CLIENT] [INFO] {'msg': 'Initiating correction loop via MCP Sampling...', 'extra': None}
+[2026-06-08 07:44:29] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-06-08 07:44:33] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-06-08 07:44:33] [CLIENT] [INFO] {'msg': 'Correction sample received from client LLM', 'extra': None}
+[2026-06-08 07:44:33] [CLIENT] [INFO] Reflection tool response received
+[2026-06-08 07:45:05] [CLIENT] [INFO] Agent final answer: Improving soilfertility for maize involves a combination of organic matter additions, strategic crop rotations, and balanced nutrient management:
+
+1. **Organic Amendments**
+   - **Farmyard manure (FYM)** and **poultry manure** are highly effective; research shows that applying 10 t/ha of each, along with 10 t/ha of biochar, significantly boosts maize growth and yield, even under drought stress.
+   - **Compost** and **green manure** (e.g., legumes like beans or cowpeas) add humus, improve soil structure, and increase nutrient availability.
+   - **Biochar** at 10 t/ha can enhance soil porosity and reduce bulk density, further improving root penetration and water retention.
+
+2. **Cover Crops & Inter‑cropping**
+   - Plant **leguminous cover crops** (beans, peas, cowpeas) between maize cycles to fix atmospheric nitrogen and add organic matter when incorporated into the soil.
+   - **Crop rotation** with nitrogen‑fixing crops (e.g., soybeans, groundnuts) helps replenish soil N and break pest cycles.
+
+3. **Balanced Fertilizer Use**
+   - Combine reduced rates of inorganic fertilizers with organic inputs to maintain optimal N‑P‑K levels while minimizing chemical load.
+   - Conduct a **soil test** to tailor fertilizer applications to the specific nutrient deficits of your field.
+
+4. **Soil Conservation Practices**
+   - **Reduced tillage** or no‑till farming preserves soil structure and organic matter.
+   - **Contour plowing** and **terrace farming** on sloped lands prevent erosion and maintain soil depth.
+
+5. **pH Management**
+   - If soil tests indicate acidity, apply **lime** to bring pH into the optimal range (6.0‑6.5 for maize), which improves nutrient uptake.
+
+6. **Water Management**
+   - Use **deficit irrigation** strategies during severe drought, paired with organic mulches, to conserve moisture while still allowing maize to access nutrients.
+
+**Integrated Approach Example**:  
+- Apply 10 t/ha of poultry manure + 10 t/ha of FYM + 10 t/ha of biochar before planting.  
+- Plant a legume cover crop (e.g., cowpeas) in the off‑season, then incorporate it as green manure.  
+- Use a reduced dose of NPK fertilizer (e.g., 50 % of the conventional rate) alongside the organic inputs.  
+- Practice minimal tillage and monitor soil moisture to adjust irrigation as needed.
+
+By integrating these practices, you can build a fertile, resilient soil ecosystem that supports robust maize production.

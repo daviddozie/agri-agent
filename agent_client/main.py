@@ -53,7 +53,6 @@ llm = ChatOpenAI(
     openai_api_key=os.getenv("OPENROUTER_API_KEY"),
     openai_api_base=os.getenv("OPENROUTER_BASE_URL"),
     temperature=0.3,
-    max_tokens=1915,
 )
 
 embeddings = HuggingFaceEmbeddings(
@@ -121,7 +120,7 @@ async def sampling_handler(
     return CreateMessageResult(
         role="assistant",
         content=TextContent(type="text", text=result_text),
-        model="gpt-4o-mini",
+        model=os.getenv("REASONING_MODEL", "nvidia/nemotron-3-nano-30b-a3b:free"),
         stopReason="endTurn",
     )
 

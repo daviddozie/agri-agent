@@ -1,7 +1,9 @@
 import json
+import asyncio
 import os
 from pathlib import Path
 from datetime import datetime
+from agent import build_analysis_agent, logger as agent_logger
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -19,7 +21,7 @@ st.set_page_config(
 
 # Header
 st.title("🌱 Agricultural Agent Diagnostic Dashboard")
-st.caption("Hierarchical Log Persistence and Graph Knowledge Mapping — Stage 3")
+st.caption("Hierarchical Log Persistence and Graph Knowledge Mapping, Stage 3")
 st.divider()
 
 # Session state
@@ -43,7 +45,7 @@ left_col, right_col = st.columns([2, 1])
 
 # Left column: chat interface
 with left_col:
-    st.subheader("💬 Natural Language Analysis Interface")
+    st.subheader("Natural Language Analysis Interface")
     st.caption(
         "Ask questions about your agent logs. Examples:\n"
         "- *Find all tool invocation logs*\n"
@@ -62,6 +64,7 @@ with left_col:
 
     if user_input:
         # Display user message
+        agent_logger.info(f"User query received: '{user_input}'")
         st.session_state.chat_history.append(
             {
                 "role": "user",
@@ -80,20 +83,23 @@ with left_col:
                 steps = []
                 step_num = 0
 
-                result = st.session_state.agent.invoke(
-                    {"messages": [{"role": "user", "content": user_input}]},
-                )
+                async def run_agent(query: str):
+                    return await st.session_state.agent.ainvoke(
+                        {"messages": [{"role": "user", "content": query}]},
+                    )
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                result = loop.run_until_complete(run_agent(user_input))
+                loop.close()
 
                 for msg in result.get("messages", []):
                     if hasattr(msg, "tool_calls") and msg.tool_calls:
                         for tc in msg.tool_calls:
                             step_num += 1
-                            step_text = (
-                                f"**Step {step_num}:** "
-                                f"Calling `{tc['name']}` "
+                            steps.append(
+                                f"**Step {step_num}:** Calling `{tc['name']}` "
                                 f"with args: `{json.dumps(tc['args'])}`"
                             )
-                            steps.append(step_text)
                             reasoning_placeholder.markdown("\n\n".join(steps))
 
                     elif hasattr(msg, "name") and msg.name:
@@ -103,11 +109,9 @@ with left_col:
                             if len(str(msg.content)) > 200
                             else str(msg.content)
                         )
-                        step_text = (
-                            f"**Step {step_num}:** "
-                            f"`{msg.name}` returned: `{content_preview}`"
+                        steps.append(
+                            f"**Step {step_num}:** `{msg.name}` returned: `{content_preview}`"
                         )
-                        steps.append(step_text)
                         reasoning_placeholder.markdown("\n\n".join(steps))
 
                         if msg.name == "map_to_neo4j":
@@ -122,7 +126,6 @@ with left_col:
                                 path = content.split("saved to:")[-1].strip()
                                 st.session_state.last_chart_path = path
 
-                
                 final_answer = result["messages"][-1].content
 
             # Clear reasoning steps, show final answer
@@ -130,7 +133,7 @@ with left_col:
 
             # Show step-by-step reasoning in expander
             if steps:
-                with st.expander("🔍 Step-by-step reasoning", expanded=False):
+                with st.expander("Step-by-step reasoning", expanded=False):
                     for step in steps:
                         st.markdown(step)
 
@@ -156,14 +159,14 @@ with left_col:
         )
 
 
-# ── Right column: Neo4j notifications + quick actions ────────────────
+# Right column: Neo4j notifications and quick actions
 with right_col:
-    st.subheader("🗄️ Neo4j Sync Notifications")
+    st.subheader("Neo4j Sync Notifications")
 
     if st.session_state.neo4j_notifications:
         for notif in reversed(st.session_state.neo4j_notifications):
             with st.container(border=True):
-                st.caption(f"🕐 {notif['timestamp']}")
+                st.caption(f"{notif['timestamp']}")
                 st.text(notif["content"])
     else:
         st.info(
@@ -173,7 +176,7 @@ with right_col:
 
     st.divider()
 
-    st.subheader("⚡ Quick Actions")
+    st.subheader("Quick Actions")
     st.caption("Click to send a preset query to the agent")
 
     quick_queries = [
@@ -195,7 +198,7 @@ with right_col:
 
     st.divider()
 
-    st.subheader("📊 System Info")
+    st.subheader("System Info")
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
     db_file = Path(db_path)
     if db_file.exists():

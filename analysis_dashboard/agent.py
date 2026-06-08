@@ -41,11 +41,10 @@ logger.addHandler(file_handler)
 
 
 llm = ChatOpenAI(
-    model="openai/gpt-4o-mini",
+    model=os.getenv("REASONING_MODEL", "nvidia/nemotron-3-nano-30b-a3b:free"),
     openai_api_key=os.getenv("OPENROUTER_API_KEY"),
-    openai_api_base="https://openrouter.ai/api/v1",
+    openai_api_base=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
     temperature=0.3,
-    max_tokens=2011,
 )
 
 embeddings = HuggingFaceEmbeddings(
@@ -306,7 +305,7 @@ async def compute_trend_metrics(metric: str = "interaction_types") -> str:
 def generate_chart(
     metric_json: str,
     chart_title: str = "Metric Chart",
-    save_to_disk: bool = False,
+    save_to_disk: bool = True,
     filename: str = "chart.png",
 ) -> str:
     """
