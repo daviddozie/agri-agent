@@ -125,24 +125,6 @@ async def sampling_handler(
     )
 
 
-# Server log handler
-async def server_log_handler(log_message: LogMessage) -> None:
-    level = str(log_message.level).upper()
-    message = (
-        log_message.data
-        if isinstance(log_message.data, str)
-        else str(log_message.data)
-    )
-    if level == "ERROR":
-        server_logger.error(message)
-    elif level == "WARNING":
-        server_logger.warning(message)
-    elif level == "DEBUG":
-        server_logger.debug(message)
-    else:
-        server_logger.info(message)
-
-
 async def run_agent(user_query: str):
     session_id = str(uuid.uuid4())
     logger.info(f"Agent started. Session: {session_id} | Query: '{user_query}'")
@@ -165,6 +147,36 @@ async def run_agent(user_query: str):
             mcp_interaction_type="agent_planning",
             content=f"Agent session started. User query: {user_query}",
         )
+
+        # Define server log handler INSIDE run_agent
+        async def server_log_handler(log_message: LogMessage) -> None:
+            level = str(log_message.level).upper()
+            message = (
+                log_message.data
+                if isinstance(log_message.data, str)
+                else str(log_message.data)
+            )
+
+            # Write to flat log file
+            if level == "ERROR":
+                server_logger.error(message)
+            elif level == "WARNING":
+                server_logger.warning(message)
+            elif level == "DEBUG":
+                server_logger.debug(message)
+            else:
+                server_logger.info(message)
+
+            # Write to SQLite store with component="server"
+            await write_structured_log(
+                store=store,
+                session_id=session_id,
+                namespace=("logs", "mcp", "server"),
+                mcp_interaction_type="server_log",
+                content=message,
+                component="server",
+                level=level,
+            )
 
         async with Client(
             "http://localhost:8000/mcp",
@@ -241,9 +253,9 @@ async def run_agent(user_query: str):
                 await write_structured_log(
                     store=store,
                     session_id=session_id,
-                    namespace=("logs", "mcp", "sampling"),
-                    mcp_interaction_type="sampling_request",
-                    content=f"MCP Sampling completed for reflection. Query: {original_query}",
+                    namespace=("logs", "mcp", "server", "tools"),
+                    mcp_interaction_type="tool_invocation",
+                    content=f"reflect_on_answer tool response received. Query: {original_query}",
                 )
                 if result.content:
                     block = result.content[0]

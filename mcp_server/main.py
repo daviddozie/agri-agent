@@ -270,10 +270,16 @@ async def agricultural_knowledge(query: str, ctx: Context) -> str:
     Tree-of-Thought evaluation (LLM-based) → Tavily fallback if needed.
     """
     logger.info(f"CRAG resource queried with: '{query}'")
+    await ctx.info(f"CRAG resource queried: '{query}'") 
 
     expanded_queries = expand_query(query)
+    await ctx.info(f"Expanded query into {len(expanded_queries)} search vectors")
+    
     retrieved_chunks = hierarchical_search(expanded_queries)
+    await ctx.info(f"Level-1 search: {len(retrieved_chunks)} chunks retrieved") 
+
     relevant_chunks = await tot_evaluate(retrieved_chunks, query, ctx)
+    await ctx.info(f"Level-2 search: {len(relevant_chunks)} chunks after ToT filter")
 
     # Tavily fallback if ToT filtered everything out
     if not relevant_chunks:
@@ -285,6 +291,7 @@ async def agricultural_knowledge(query: str, ctx: Context) -> str:
                 for r in tavily_results.get("results", [])
             )
             logger.info("Tavily fallback successful")
+            await ctx.info("Tavily fallback triggered and successful")
             return f"[FALLBACK, Web Results]\n\n{fallback_content}"
         except Exception as e:
             logger.error(f"Tavily fallback failed: {e}")
@@ -300,6 +307,7 @@ async def agricultural_knowledge(query: str, ctx: Context) -> str:
         )
 
     logger.info(f"CRAG resource returning {len(output)} relevant results")
+    await ctx.info(f"CRAG returning {len(output)} relevant results")
     return "\n\n".join(output)
 
 

@@ -206,3 +206,16 @@ Map session <session_id> to Neo4j
 | `mcp_agent_system.log` | Dual-stream log from agent client runs |
 | `mcp_agent_log.db` | SQLite vector store with structured log entries |
 | `analysis_dashboard/analysis_agent.log` | Log Analysis Agent execution log |
+
+## Screenshots
+
+### Terminal 1 — MCP Server Running
+![MCP Server](screenshots/mcp_server.png)
+
+### Terminal 2 — Agent Client Processing Query
+![Agent Client](screenshots/agent_client.png)
+
+### Terminal 3 — Streamlit Dashboard with Neo4j Sync
+![Streamlit Dashboard](screenshots/analysis_dashboard1.png)
+![Streamlit Dashboard](screenshots/analysis_dashboard2.png)
+![Streamlit Dashboard](screenshots/analysis_dashboard3.png)

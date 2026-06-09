@@ -62,3 +62,26 @@
 }
 [2026-06-08 10:41:40] [ANALYSIS] [INFO] Generating chart: 'Session Activity Metrics'
 [2026-06-08 10:41:40] [ANALYSIS] [INFO] Chart saved to /Users/daviddozie/agri-agent/analysis_dashboard/chart.png
+[2026-06-09 09:48:50] [ANALYSIS] [INFO] Log Analysis Agent initialized
+[2026-06-09 09:48:58] [ANALYSIS] [INFO] User query received: 'Show me interaction type frequency as a chart'
+[2026-06-09 09:49:02] [ANALYSIS] [INFO] Computing trend metrics: interaction_types
+[2026-06-09 09:49:02] [ANALYSIS] [INFO] Trend metrics computed: {
+  "tool_invocation": 5,
+  "server_log": 10,
+  "resource_read": 10,
+  "agent_planning": 14,
+  "sampling_request": 2
+}
+[2026-06-09 09:49:06] [ANALYSIS] [INFO] Generating chart: 'Interaction Type Frequency'
+[2026-06-09 09:49:07] [ANALYSIS] [INFO] Chart saved to /Users/daviddozie/agri-agent/analysis_dashboard/chart.png
+[2026-06-09 09:50:57] [ANALYSIS] [INFO] User query received: 'Map session 715202f1-0791-4ce8-8603-d1573daba5a5 to Neo4j'
+[2026-06-09 09:51:02] [ANALYSIS] [INFO] Mapping session 715202f1-0791-4ce8-8603-d1573daba5a5 to Neo4j...
+[2026-06-09 09:53:24] [ANALYSIS] [INFO] User query received: 'Map session 715202f1-0791-4cee-8603-d1573daba5a5 to Neo4j'
+[2026-06-09 09:53:27] [ANALYSIS] [INFO] Mapping session 715202f1-0791-4cee-8603-d1573daba5a5 to Neo4j...
+[2026-06-09 10:30:07] [ANALYSIS] [INFO] Log Analysis Agent initialized
+[2026-06-09 10:30:19] [ANALYSIS] [INFO] User query received: 'Map session 715202f1-0791-4cee-8603-d1573daba5a5 to Neo4j'
+[2026-06-09 10:30:23] [ANALYSIS] [INFO] Mapping session 715202f1-0791-4cee-8603-d1573daba5a5 to Neo4j...
+[2026-06-09 10:30:30] [ANALYSIS] [INFO] Neo4j sync complete for session 715202f1...
+Nodes created: 7
+Edges created: 11
+Log entries processed: 16
