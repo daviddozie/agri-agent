@@ -1,6 +1,6 @@
-# Agri Agent Stage 3 — Hierarchical Log Persistence and Graph Knowledge Mapping
+# Agri Agent Stage 4 — Resilient Execution, Edgeless StateGraph Analysis, and Contextual XAI
 
-A production-grade, multi-agent diagnostic system extending the Stage 2 MCP agricultural advisory agent with structured vector log persistence, Neo4j graph knowledge mapping, and an interactive Streamlit diagnostic dashboard.
+A production-grade, multi-agent diagnostic system extending the Stage 3 MCP agricultural advisory agent with strict execution resilience (RunnableWithRetry & RunnableWithFallbacks), an edgeless LangGraph StateGraph, and local explainability audits (SHAP/LIME).
 
 ---
 
@@ -12,6 +12,8 @@ agri-agent/
 ├── .env.example                    ← environment variable reference
 ├── README.md
 ├── REFLECTION_STAGE3.md
+├── REFLECTION_STAGE4.md            ← Stage 4 conceptual analysis
+├── explainability_audit_report.json ← compliance audit export
 ├── mcp_agent_system.log            ← sample log from test execution
 ├── mcp_agent_log.db                ← SQLite vector log store
 ├── mcp_server/
@@ -21,12 +23,15 @@ agri-agent/
 │   └── .env
 ├── agent_client/
 │   ├── pyproject.toml
-│   ├── main.py                     ← LangChain agent + AsyncSqliteStore
+│   ├── main.py                     ← LangChain agent with fallback & retries
 │   └── .env
 └── analysis_dashboard/
     ├── pyproject.toml
-    ├── agent.py                    ← Log Analysis Agent + 4 tools
-    ├── app.py                      ← Streamlit UI
+    ├── agent.py                    ← Log Analysis Agent definitions
+    ├── app.py                      ← Streamlit UI (chat + XAI tabs)
+    ├── explainability_engine.py    ← LIME/SHAP calculation engine
+    ├── graph_nodes.py              ← StateGraph nodes (edgeless)
+    ├── graph_builder.py            ← StateGraph compiler
     ├── analysis_agent.log          ← sample analysis agent log
     └── .env
 ```
@@ -123,25 +128,43 @@ HF_TOKEN=your_huggingface_token
 
 You need **three terminal windows** open simultaneously.
 
-**Terminal 1 — Start the MCP Server:**
-
+### Option A: Unix / macOS / Linux Bash or Zsh
 ```bash
+# Terminal 1: Initialize your MCP Server
 uv run --package mcp-server python mcp_server/main.py
-```
 
-**Terminal 2 — Start the Agent Client:**
-
-```bash
+# Terminal 2: Initialize your resilient application engine (Agent Client)
 uv run --package agent-client python agent_client/main.py
-```
 
-**Terminal 3 — Start the Streamlit Dashboard:**
-
-```bash
+# Terminal 3: Initialize your edgeless XAI analytical control room (Streamlit)
 uv run --package analysis-dashboard streamlit run analysis_dashboard/app.py
 ```
 
-Then open http://localhost:8501 in your browser.
+### Option B: Windows Command Prompt (CMD)
+```cmd
+:: Terminal 1: Initialize your MCP Server
+uv run --package mcp-server python mcp_server/main.py
+
+:: Terminal 2: Initialize your resilient application engine (Agent Client)
+uv run --package agent-client python agent_client/main.py
+
+:: Terminal 3: Initialize your edgeless XAI analytical control room (Streamlit)
+uv run --package analysis-dashboard streamlit run analysis_dashboard/app.py
+```
+
+### Option C: Windows PowerShell
+```powershell
+# Terminal 1: Initialize your MCP Server
+uv run --package mcp-server python mcp_server/main.py
+
+# Terminal 2: Initialize your resilient application engine (Agent Client)
+uv run --package agent-client python agent_client/main.py
+
+# Terminal 3: Initialize your edgeless XAI analytical control room (Streamlit)
+uv run --package analysis-dashboard streamlit run analysis_dashboard/app.py
+```
+
+After launching Terminal 3, open http://localhost:8501 in your browser to access the control room.
 
 ---
 
@@ -199,13 +222,14 @@ Map session <session_id> to Neo4j
 
 ---
 
-## Log Files
+## Log Files and Audit Artifacts
 
 | File | Description |
 |---|---|
 | `mcp_agent_system.log` | Dual-stream log from agent client runs |
 | `mcp_agent_log.db` | SQLite vector store with structured log entries |
 | `analysis_dashboard/analysis_agent.log` | Log Analysis Agent execution log |
+| `explainability_audit_report.json` | High-fidelity JSON export containing SHAP/LIME calculations and Neo4j path context |
 
 ## Screenshots
 
@@ -219,3 +243,7 @@ Map session <session_id> to Neo4j
 ![Streamlit Dashboard](screenshots/analysis_dashboard1.png)
 ![Streamlit Dashboard](screenshots/analysis_dashboard2.png)
 ![Streamlit Dashboard](screenshots/analysis_dashboard3.png)
+
+### Terminal 4 — Explainability Audit Report
+![Explainability Audit Report](screenshots/audit_log1.png)
+![Explainability Audit Report](screenshots/audit_log2.png)

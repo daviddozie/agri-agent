@@ -85,3 +85,51 @@
 Nodes created: 7
 Edges created: 11
 Log entries processed: 16
+[2026-06-15 15:36:01] [ANALYSIS] [INFO] Log Analysis Agent initialized
+[2026-06-15 15:36:17] [ANALYSIS] [INFO] User query received: 'Find all tool invocation logs'
+[2026-06-15 15:36:22] [ANALYSIS] [INFO] Semantic search query: 'tool invocation' top_k=10
+[2026-06-15 15:36:23] [ANALYSIS] [INFO] Semantic search returned 10 results
+[2026-06-21 19:44:51] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-06-21 19:50:01] [ANALYSIS] [INFO] User query received: 'hello'
+[2026-06-21 19:50:01] [ANALYSIS] [INFO] [initial_ingest_node] Classifying intent for query: 'hello'
+[2026-06-21 19:50:05] [ANALYSIS] [INFO] [initial_ingest_node] Classified as 'unknown' (session_id=unknown) — The input 'hello' is a simple greeting and does not constitute a log‑analysis query. It does not contain any request for log data, filters, or analysis commands, so it cannot be classified as a query intent. The appropriate intent label would be a greeting or no‑op.
+[2026-06-21 19:50:05] [ANALYSIS] [INFO] [respond_node] Assembling final answer for intent='unknown'
+[2026-06-21 19:50:05] [ANALYSIS] [INFO] [respond_node] Final answer assembled (134 chars)
+[2026-06-21 19:50:24] [ANALYSIS] [INFO] User query received: 'Find all tool invocation logs'
+[2026-06-21 19:50:24] [ANALYSIS] [INFO] [initial_ingest_node] Classifying intent for query: 'Find all tool invocation logs'
+[2026-06-21 19:50:27] [ANALYSIS] [INFO] [initial_ingest_node] Classified as 'semantic_search' (session_id=default) — The query seeks to locate and retrieve all log entries that represent tool invocations, which corresponds to a search operation over the log dataset.
+[2026-06-21 19:50:27] [ANALYSIS] [INFO] [semantic_search_node] Searching for: 'Find all tool invocation logs'
+[2026-06-21 19:50:27] [ANALYSIS] [INFO] [semantic_search_node] Found 5 results
+[2026-06-21 19:50:27] [ANALYSIS] [INFO] [respond_node] Assembling final answer for intent='semantic_search'
+[2026-06-21 19:50:27] [ANALYSIS] [INFO] [respond_node] Final answer assembled (963 chars)
+[2026-06-21 19:54:02] [ANALYSIS] [INFO] User query received: 'What interaction types are most common?'
+[2026-06-21 19:54:02] [ANALYSIS] [INFO] [initial_ingest_node] Classifying intent for query: 'What interaction types are most common?'
+[2026-06-21 19:54:05] [ANALYSIS] [INFO] [initial_ingest_node] Classified as 'trend_metrics' (session_id=12345) — The query seeks to determine which interaction types appear most frequently in the logs, which requires counting occurrences and ranking them. This is a classic top‑k frequency analysis intent.
+[2026-06-21 19:54:05] [ANALYSIS] [INFO] [trend_analysis_node] Computing metric: interaction_types
+[2026-06-21 19:54:06] [ANALYSIS] [INFO] [trend_analysis_node] Computed: {
+  "resilience_event": 8,
+  "agent_planning": 27,
+  "tool_invocation": 13,
+  "server_log": 66,
+  "resource_read": 26,
+  "sampling_request": 2
+}
+[2026-06-21 19:54:06] [ANALYSIS] [INFO] [respond_node] Assembling final answer for intent='trend_metrics'
+[2026-06-21 19:54:06] [ANALYSIS] [INFO] [respond_node] Final answer assembled (195 chars)
+[2026-06-21 22:13:07] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-06-21 22:13:40] [ANALYSIS] [INFO] User query received: 'Find any error logs and summarize them.'
+[2026-06-21 22:13:40] [ANALYSIS] [INFO] [initial_ingest_node] Classifying intent for query: 'Find any error logs and summarize them.'
+[2026-06-21 22:13:43] [ANALYSIS] [INFO] [initial_ingest_node] Classified as 'semantic_search' (session_id=12345) — The query seeks to locate error logs and produce a summary, which aligns with the intent of retrieving and summarizing error logs.
+[2026-06-21 22:13:43] [ANALYSIS] [INFO] [semantic_search_node] Searching for: 'Find any error logs and summarize them.'
+[2026-06-21 22:13:44] [ANALYSIS] [INFO] [semantic_search_node] Found 5 results
+[2026-06-21 22:13:44] [ANALYSIS] [INFO] [respond_node] Assembling final answer for intent='semantic_search'
+[2026-06-21 22:13:44] [ANALYSIS] [INFO] [respond_node] Final answer assembled (1130 chars)
+[2026-06-21 22:15:03] [ANALYSIS] [INFO] [xai] Starting explainability audit for session_id=3f654dbb-9888-4e5a-93fe-782f141cae38
+[2026-06-21 22:15:03] [ANALYSIS] [INFO] [xai] Hydrating Neo4j context for session_id=3f654dbb-9888-4e5a-93fe-782f141cae38
+[2026-06-21 22:15:03] [ANALYSIS] [WARNING] [xai] Neo4j hydration failed due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known
+[2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Proxy LIME: 14 tokens, 14 perturbation windows, baseline_similarity=0.2399
+[2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Proxy LIME complete. Top token-importance window: {'window_text': 'execution failed: Error', 'start_idx': 1, 'end_idx': 4, 'importance': 0.12131}
+[2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Proxy SHAP: computing exact Shapley values for 4 features: ['latency_ms', 'payload_len', 'call_frequency', 'error_count']
+[2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Proxy SHAP complete: {'latency_ms': 0.0, 'payload_len': 0.0192, 'call_frequency': 0.05, 'error_count': 0.2}
+[2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Explainability audit complete for session 3f654dbb... dominant_feature=error_count
+[2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
