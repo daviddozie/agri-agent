@@ -1,0 +1,92 @@
+{
+  "session_id": "3f654dbb-9888-4e5a-93fe-782f141cae38",
+  "generated_at": "2026-06-21T21:15:05.842716+00:00",
+  "log_entries_analyzed": 1,
+  "neo4j_context": {
+    "found": false,
+    "node_count": 0,
+    "edge_count": 0,
+    "context_text": "Offline/Unavailable: Neo4j graph context could not be retrieved due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known"
+  },
+  "proxy_lime": {
+    "method": "token-window masking + embedding-similarity to failure reference",
+    "top_importances": [
+      {
+        "window_text": "execution failed: Error",
+        "start_idx": 1,
+        "end_idx": 4,
+        "importance": 0.12131
+      },
+      {
+        "window_text": "{'error': {'message': 'User",
+        "start_idx": 7,
+        "end_idx": 10,
+        "importance": 0.11799
+      },
+      {
+        "window_text": "failed: Error code:",
+        "start_idx": 2,
+        "end_idx": 5,
+        "importance": 0.11352
+      },
+      {
+        "window_text": "- {'error': {'message':",
+        "start_idx": 6,
+        "end_idx": 9,
+        "importance": 0.11271
+      },
+      {
+        "window_text": "401 - {'error':",
+        "start_idx": 5,
+        "end_idx": 8,
+        "importance": 0.10858
+      },
+      {
+        "window_text": "{'message': 'User not",
+        "start_idx": 8,
+        "end_idx": 11,
+        "importance": 0.10594
+      },
+      {
+        "window_text": "code: 401 -",
+        "start_idx": 4,
+        "end_idx": 7,
+        "importance": 0.10498
+      },
+      {
+        "window_text": "Error code: 401",
+        "start_idx": 3,
+        "end_idx": 6,
+        "importance": 0.10289
+      },
+      {
+        "window_text": "Agent execution failed:",
+        "start_idx": 0,
+        "end_idx": 3,
+        "importance": 0.10235
+      },
+      {
+        "window_text": "'User not found.',",
+        "start_idx": 9,
+        "end_idx": 12,
+        "importance": 0.09355
+      }
+    ]
+  },
+  "proxy_shap": {
+    "method": "exact Shapley value over normalized-magnitude feature scorer",
+    "feature_vector": {
+      "latency_ms": 0.0,
+      "payload_len": 96.0,
+      "call_frequency": 1.0,
+      "error_count": 1.0
+    },
+    "shapley_values": {
+      "latency_ms": 0.0,
+      "payload_len": 0.0192,
+      "call_frequency": 0.05,
+      "error_count": 0.2
+    },
+    "dominant_feature": "error_count"
+  }
+}

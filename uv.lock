@@ -31,6 +31,7 @@ dependencies = [
     { name = "openai" },
     { name = "python-dotenv" },
     { name = "sentence-transformers" },
+    { name = "tenacity" },
 ]
 
 [package.metadata]
@@ -46,6 +47,7 @@ requires-dist = [
     { name = "openai", specifier = ">=2.41.0" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "sentence-transformers", specifier = ">=5.5.1" },
+    { name = "tenacity", specifier = ">=9.1.4" },
 ]
 
 [[package]]
@@ -104,6 +106,8 @@ dependencies = [
     { name = "matplotlib" },
     { name = "neo4j" },
     { name = "nest-asyncio" },
+    { name = "numpy" },
+    { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "seaborn" },
     { name = "sentence-transformers" },
@@ -121,6 +125,8 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.9" },
     { name = "neo4j", specifier = ">=6.2.0" },
     { name = "nest-asyncio", specifier = ">=1.6.0" },
+    { name = "numpy", specifier = ">=2.4.6" },
+    { name = "pydantic", specifier = ">=2.13.4" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "sentence-transformers", specifier = ">=5.5.1" },
