@@ -252,3 +252,9 @@ Map session <session_id> to Neo4j
 ### Terminal 4 — Explainability Audit Report
 ![Explainability Audit Report](screenshots/audit_log1.png)
 ![Explainability Audit Report](screenshots/audit_log2.png)
+
+### Terminal 5 — Semantic Cache Audit Report
+![Semantic Cache Audit Report](screenshots/cache1.png)
+![Semantic Cache Audit Report](screenshots/cache2.png)
+![Semantic Cache Audit Report](screenshots/cache3.png)
+![Semantic Cache Audit Report](screenshots/cache4.png)
