@@ -974,3 +974,239 @@ $RC=function(a,b){if(b=document.getElementById(b))(a=document.getElementById(a))
 - Leverage USDA NRCS resources and local extension services for technical assistance, cost‑share programs, and region‑specific recommendations.
 
 By integrating these practices, you can build a more resilient, productive, and sustainable soil ecosystem that supports higher yields, better water management, and long‑term farm profitability.
+[2026-07-07 22:51:15] [CLIENT] [INFO] Agent started. Session: 19db34c3-eb33-4c67-a1a7-d88997c5bfd6 | Query: 'How do I improve soil health on my farm?'
+[2026-07-07 22:51:15] [CLIENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-07-07 22:51:17] [CLIENT] [INFO] MCP session initialised, sampling handler and log handler registered
+[2026-07-07 22:51:17] [CLIENT] [INFO] Agent ready. Sending query...
+[2026-07-07 22:51:17] [CLIENT] [WARNING] Agent invocation failed. Engaging self-healing fallback. error_trace='RunnableRetry' object has no attribute 'bind_tools'
+[2026-07-07 22:51:22] [CLIENT] [INFO] Resilience event drained to store: self_healing_fallback — Agent invocation failed, retrying once more. error_trace='RunnableRetry' object has no attribute 'bind_tools'
+[2026-07-07 22:51:22] [CLIENT] [INFO] Agent final answer: I’m sorry you encountered a brief technical hiccup earlier – a transient tool error occurred, but it has now been self‑healed, so we can get back to the advice you’re looking for.
+
+---
+
+## How to Improve Soil Health on Your Farm
+
+Imhealthy soil is the foundation of productive, resilient agriculture. Below are proven, science‑based practices you can integrate into your farm plan, along with practical tips for implementation.
+
+### 1. Conduct a Baseline Soil Test
+- **Why:** Identifies pH, nutrient levels, organic matter, and texture.
+- **How:** Collect samples from multiple field zones (0–15 cm depth) and send them to a reputable lab. Use the results as a roadmap for amendments.
+
+### 2. Increase Organic Matter
+- **Cover Crops:** Plant legumes (e.g., clover, vetch) or grasses (e.g., rye) during off‑seasons. They add biomass, fix nitrogen (legumes), and protect against erosion.
+- **Crop Residue Management:** Leave stalks and roots on the surface where possible; they decompose and feed soil microbes.
+- **Compost & Manure:** Apply well‑aged compost or livestock manure at rates based on soil test recommendations. Aim for 1–3 % organic matter by weight.
+
+### 3. Practice Crop Rotation & Diversification
+- **Rotate Families:** Alternate cereals, legumes, and root crops to break pest cycles and balance nutrient demands.
+- **Include Deep‑Rooted Crops:** Crops like alfalfa or radish penetrate compacted layers, improving structure and water infiltration.
+
+### 4. Adopt Conservation Tillage or No‑Till
+- **Benefits:** Reduces soil disturbance, preserves aggregates, and maintains moisture.
+- **Implementation Tips:** Use a strip‑till or direct‑seed drill; keep residue on the surface to protect against erosion.
+
+### 5. Manage Soil pH
+- **Lime Application:** If pH is below the optimal range (typically 6.0–6.5 for many crops), apply agricultural lime according to soil test rates.
+- **Sulfur for Alkaline Soils:** In high‑pH soils, elemental sulfur can gradually lower pH.
+
+### 6. Balanced Fertilization
+- **Nitrogen:** Use legume rotations or split applications of synthetic N to minimize leaching.
+- **Phosphorus & Potassium:** Apply based on soil test deficits; consider slow‑release forms to match plant uptake.
+- **Micronutrients:** Address deficiencies (e.g., zinc, boron) with targeted amendments.
+
+### 7. Encourage Soil Biology
+- **Reduce Pesticide Impact:** Use integrated pest management (IPM) to limit broad‑spectrum chemicals that harm beneficial microbes.
+- **Add Biochar (optional):** In low‑organic‑matter soils, biochar can improve cation exchange capacity and microbial habitat.
+
+### 8. Monitor and Adjust Annually
+- **Re‑test Every 2–3 Years:** Soil conditions change; update amendment plans accordingly.
+- **Track Indicators:** Look for improvements in soil structure, earthworm activity, and water infiltration as signs of progress.
+
+---
+
+### Quick Checklist for Immediate Action
+| Action | When to Do It | Key Benefit |
+|--------|---------------|-------------|
+| Soil test | Before planting season | Baseline data |
+| Plant cover crop | Off‑season | Organic matter, nitrogen |
+| Add compost/manure | Early spring or after harvest | Nutrient boost |
+| Switch to reduced tillage | Next planting cycle | Soil structure |
+| Apply lime/sulfur | Based on pH test | pH optimization |
+| Rotate crops | Each season | Pest & nutrient balance |
+
+---
+
+### Final Thought
+Improving soil health is a long‑term investment. By combining scientific testing with practical, regenerative practices, you’ll build a resilient soil ecosystem that supports higher yields, better water use efficiency, and greater profitability for your farm.
+
+If you have specific crops, climate conditions, or existing practices you’d like to tailor these recommendations to, feel free to share more details and I can help fine‑tune the plan.
+[2026-07-07 23:16:49] [CLIENT] [INFO] Agent started. Session: 26ffbd4f-cccd-464c-bf46-5dddad5b52b6 | Query: 'How do I improve soil health on my farm?'
+[2026-07-07 23:16:49] [CLIENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-07-07 23:16:50] [CLIENT] [INFO] MCP session initialised, sampling handler and log handler registered
+[2026-07-07 23:16:50] [CLIENT] [INFO] Agent ready. Sending query...
+[2026-07-07 23:16:55] [CLIENT] [INFO] Querying CRAG resource with: 'How do I improve soil health on my farm?'
+[2026-07-07 23:16:56] [CLIENT] [INFO] {'msg': "CRAG resource queried: 'How do I improve soil health on my farm'", 'extra': None}
+[2026-07-07 23:16:56] [CLIENT] [INFO] {'msg': 'Expanded query into 5 search vectors', 'extra': None}
+[2026-07-07 23:16:56] [CLIENT] [INFO] {'msg': 'Level-1 search: 6 chunks retrieved', 'extra': None}
+[2026-07-07 23:16:56] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:16:57] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:16:57] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:16:58] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:16:58] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:16:59] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:16:59] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:17:01] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:17:01] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:17:02] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:17:02] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:17:03] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:17:05] [CLIENT] [INFO] {'msg': 'Level-2 search: 0 chunks after ToT filter', 'extra': None}
+[2026-07-07 23:17:05] [CLIENT] [INFO] {'msg': 'Tavily fallback triggered and successful', 'extra': None}
+[2026-07-07 23:17:05] [CLIENT] [INFO] CRAG resource response received
+[2026-07-07 23:17:10] [CLIENT] [INFO] Calling remote reflection tool on MCP server...
+[2026-07-07 23:17:10] [CLIENT] [INFO] {'msg': "Reflection tool invoked for query: 'How do I improve soil health on my farm?'", 'extra': None}
+[2026-07-07 23:17:10] [CLIENT] [INFO] {'msg': 'Initiating critique loop via MCP Sampling...', 'extra': None}
+[2026-07-07 23:17:10] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:17:14] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:17:14] [CLIENT] [INFO] {'msg': 'Critique sample received from client LLM', 'extra': None}
+[2026-07-07 23:17:14] [CLIENT] [INFO] {'msg': 'Initiating correction loop via MCP Sampling...', 'extra': None}
+[2026-07-07 23:17:14] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-07 23:17:18] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-07 23:17:18] [CLIENT] [INFO] {'msg': 'Correction sample received from client LLM', 'extra': None}
+[2026-07-07 23:17:18] [CLIENT] [INFO] Reflection tool response received
+[2026-07-07 23:17:35] [CLIENT] [INFO] Agent final answer: {
+  "corrected_answer": "To improve soil health on your farm, consider these integrated practices:\n\n1. Increase organic matter by adding compost, well‑aged manure, or cover‑crop residues, and consider biochar to enhance carbon stability.\n2. Practice diverse crop rotations and cover crops, including legumes, grasses, and deep‑rooted species, and select species suited to your climate and soil type.\n3. Conduct regular soil tests for pH, macro‑ and micronutrients, organic matter, and texture; adjust with lime, sulfur, or targeted fertilizers as needed.\n4. Manage nutrients precisely by applying fertilizers based on test results, using split applications, and recycling nutrients through manure or compost.\n5. Reduce soil disturbance by adopting reduced‑till or no‑till, limiting tillage depth, and preserving soil aggregates and microbial habitats.\n6. Maintain year‑round ground cover with cover crops, mulches, or perennial plants; choose species that fix nitrogen, suppress weeds, and improve structure.\n7. Optimize water management with contour bunds, swales, or appropriate drainage to ensure good infiltration while avoiding waterlogging.\n8. Protect soil biology by minimizing pesticide use, adopting integrated pest management, and applying microbial inoculants or mycorrhizal amendments when appropriate.\n9. Monitor soil health indicators such as organic matter content, aggregate stability, infiltration rate, and biological activity to track progress.\n\nImplementing these practices together will boost organic matter, improve soil structure, enhance microbial communities, and increase resilience to weather extremes, leading to healthier, more productive soils.",
+  "changes_made": [
+    "Added recommendation to use biochar for stable carbon addition",
+    "Added step to conduct regular soil tests for pH, macro‑ and micronutrients, and organic matter",
+    "Added guidance on adjusting pH with lime or sulfur based on test results",
+    "Added note on balanced nutrient management, including micronutrients and split fertilizer applications",
+    "Added suggestion to use microbial inoculants or mycorrhizal amendments to boost soil biology",
+    "Clarified that synthetic fertilizers should be applied only as needed, based on test results, and integrated with organic inputs",
+    "Added specific cover‑crop species examples (e.g., clover, rye, vetch) and their benefits",
+    "Expanded water‑management recommendations to include contour bunds, swales, and drainage options tailored to field conditions",
+    "Added monitoring of soil health indicators such as aggregate stability, infiltration rate, and biological activity",
+    "Emphasized integrated pest management and reduced pesticide reliance",
+    "Highlighted the importance of maintaining year‑round ground cover with mulches or perennial plants",
+    "Strengthened the point on minimizing soil disturbance by specifying reduced‑till or no‑till practices and limiting tillage depth"
+  ]
+}
+[2026-07-08 18:28:15] [CLIENT] [INFO] Agent started. Session: 4d153d43-2bba-49f8-8482-1bc51870e0b1 | Query: 'What is the best crop rotation strategy for tomatoes to prevent blight?'
+[2026-07-08 18:28:17] [CLIENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-07-08 18:28:20] [CLIENT] [INFO] MCP session initialised, sampling handler and log handler registered
+[2026-07-08 18:28:20] [CLIENT] [INFO] Agent ready. Sending query...
+[2026-07-08 18:28:26] [CLIENT] [INFO] Querying CRAG resource with: 'best crop rotation strategy for tomatoes to prevent blight'
+[2026-07-08 18:28:27] [CLIENT] [INFO] {'msg': "CRAG resource queried: 'best crop rotation strategy for tomatoes to prevent blight'", 'extra': None}
+[2026-07-08 18:28:28] [CLIENT] [INFO] {'msg': 'Expanded query into 5 search vectors', 'extra': None}
+[2026-07-08 18:28:29] [CLIENT] [INFO] {'msg': 'Level-1 search: 6 chunks retrieved', 'extra': None}
+[2026-07-08 18:28:29] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:31] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-08 18:28:31] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:31] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0169 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:28:31] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:32] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0332 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:28:32] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:32] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0397 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:28:32] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:32] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0400 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:28:32] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:32] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0344 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:28:32] [CLIENT] [INFO] {'msg': 'Level-2 search: 0 chunks after ToT filter', 'extra': None}
+[2026-07-08 18:28:33] [CLIENT] [INFO] {'msg': 'Tavily fallback triggered and successful', 'extra': None}
+[2026-07-08 18:28:34] [CLIENT] [INFO] CRAG resource response received
+[2026-07-08 18:28:37] [CLIENT] [INFO] Calling remote reflection tool on MCP server...
+[2026-07-08 18:28:38] [CLIENT] [INFO] {'msg': "Reflection tool invoked for query: 'What is the best crop rotation strategy for tomatoes to prevent blight?'", 'extra': None}
+[2026-07-08 18:28:39] [CLIENT] [INFO] {'msg': 'Initiating critique loop via MCP Sampling...', 'extra': None}
+[2026-07-08 18:28:40] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:43] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-08 18:28:43] [CLIENT] [INFO] {'msg': 'Critique sample received from client LLM', 'extra': None}
+[2026-07-08 18:28:44] [CLIENT] [INFO] {'msg': 'Initiating correction loop via MCP Sampling...', 'extra': None}
+[2026-07-08 18:28:44] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:28:44] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0496 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:28:44] [CLIENT] [INFO] {'msg': 'Correction sample received from client LLM', 'extra': None}
+[2026-07-08 18:28:45] [CLIENT] [INFO] Reflection tool response received
+[2026-07-08 18:28:52] [CLIENT] [INFO] Agent final answer: {
+  "factual_errors": [
+    "Stating a universal 3-year rotation may be misleading; the optimal period can vary (2–3 years) depending on the specific pathogen and local conditions.",
+    "Rye is not a strong pathogen suppressor; mustard is more effective as a biofumigant, and rye's role is mainly soil health improvement."
+  ],
+  "missing_points": [
+    "Specific rotation length recommendations (2–3 years) tailored to local disease pressure.",
+    "Recommendation of resistant tomato varieties.",
+    "Details on proper spacing, irrigation, and overhead watering avoidance.",
+    "Integrated disease management including fungicide use when appropriate.",
+    "Soil testing and pH management guidance.",
+    "Specific sanitation practices such as tool disinfection and debris burial.",
+    "Management of cover crops (e.g., timing, termination) for disease suppression.",
+    "Alternative strategies for limited space, such as container rotation or intercropping."
+  ],
+  "improvement_areas": [
+    "Add detail on rotation schedule and pathogen-specific timing.",
+    "Specify non-host crops and cover crop choices.",
+    "Include integrated management tactics beyond rotation.",
+    "Provide guidance on sanitation and soil health assessment.",
+    "Offer practical solutions for small-scale or raised‑bed systems."
+  ],
+  "overall_quality": [
+    "fair"
+  ]
+}
+[2026-07-08 18:31:43] [CLIENT] [INFO] Agent started. Session: ae4529fe-ff44-4f9e-ba73-f95ec33318d3 | Query: 'Can you tell me the best crop rotation strategy for tomatoes to prevent blight?'
+[2026-07-08 18:31:45] [CLIENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-07-08 18:31:47] [CLIENT] [INFO] MCP session initialised, sampling handler and log handler registered
+[2026-07-08 18:31:47] [CLIENT] [INFO] Agent ready. Sending query...
+[2026-07-08 18:31:50] [CLIENT] [INFO] Querying CRAG resource with: 'best crop rotation strategy for tomatoes to prevent blight'
+[2026-07-08 18:31:51] [CLIENT] [INFO] {'msg': "CRAG resource queried: 'best crop rotation strategy for tomatoes to prevent blight'", 'extra': None}
+[2026-07-08 18:31:52] [CLIENT] [INFO] {'msg': 'Expanded query into 5 search vectors', 'extra': None}
+[2026-07-08 18:31:53] [CLIENT] [INFO] {'msg': 'Level-1 search: 6 chunks retrieved', 'extra': None}
+[2026-07-08 18:31:54] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:31:54] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0000 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:31:54] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:31:54] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0169 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:31:54] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:31:54] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0332 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:31:54] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:31:54] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0397 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:31:54] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:31:54] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0400 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:31:54] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:31:54] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0344 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:31:54] [CLIENT] [INFO] {'msg': 'Level-2 search: 0 chunks after ToT filter', 'extra': None}
+[2026-07-08 18:31:55] [CLIENT] [INFO] {'msg': 'Tavily fallback triggered and successful', 'extra': None}
+[2026-07-08 18:31:56] [CLIENT] [INFO] CRAG resource response received
+[2026-07-08 18:32:01] [CLIENT] [INFO] Calling remote reflection tool on MCP server...
+[2026-07-08 18:32:02] [CLIENT] [INFO] {'msg': "Reflection tool invoked for query: 'Can you tell me the best crop rotation strategy for tomatoes to prevent blight?'", 'extra': None}
+[2026-07-08 18:32:02] [CLIENT] [INFO] {'msg': 'Initiating critique loop via MCP Sampling...', 'extra': None}
+[2026-07-08 18:32:03] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:32:07] [CLIENT] [INFO] MCP Sampling complete, returning result to server
+[2026-07-08 18:32:07] [CLIENT] [INFO] {'msg': 'Critique sample received from client LLM', 'extra': None}
+[2026-07-08 18:32:08] [CLIENT] [INFO] {'msg': 'Initiating correction loop via MCP Sampling...', 'extra': None}
+[2026-07-08 18:32:09] [CLIENT] [INFO] MCP Sampling request received from server, executing LLM locally...
+[2026-07-08 18:32:09] [CLIENT] [INFO] [REDIS SEMANTIC CACHE HIT] dist=0.0042 <= 0.15 | Bypassing LLM.
+[2026-07-08 18:32:09] [CLIENT] [INFO] {'msg': 'Correction sample received from client LLM', 'extra': None}
+[2026-07-08 18:32:09] [CLIENT] [INFO] Reflection tool response received
+[2026-07-08 18:32:23] [CLIENT] [INFO] Agent final answer: {
+  "factual_errors": [
+    "Recommending rye as a cover crop to suppress tomato blight is inaccurate; rye does not specifically suppress blight pathogens."
+  ],
+  "missing_points": [
+    "Did not specify concrete non‑host rotation crops such as beans, peas, corn, or cucurbits.",
+    "Omitted soil solarization as a disease‑suppression practice.",
+    "Did not mention proper spacing and air circulation to reduce humidity.",
+    "Did not advise avoiding overhead irrigation to limit leaf wetness.",
+    "Did not discuss the use of fungicides as a preventive measure.",
+    "Did not clarify the recommended minimum rotation length (e.g., 3 years) and that longer rotations are beneficial.",
+    "Did not note the importance of soil testing for pH and nutrient balance.",
+    "Did not address weed control to prevent volunteer solanaceous hosts."
+  ],
+  "improvement_areas": [
+    "Provide concrete examples of non‑host rotation crops.",
+    "Detail optimal rotation length and the benefit of longer cycles.",
+    "Include cultural practices such as soil solarization, proper spacing, and drip irrigation.",
+    "Discuss integrated disease management, including resistant varieties and targeted fungicide use.",
+    "Clarify cover‑crop selection and its role in disease suppression."
+  ],
+  "overall_quality": [
+    "good"
+  ]
+}

@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from langgraph.types import Command
 from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
-from langgraph.store.sqlite.aio import AsyncSqliteStore
+from postgres_store import PostgresStore
 from explainability_engine import run_explainability_audit, save_audit_report
 from neo4j import GraphDatabase
 
@@ -191,10 +191,11 @@ async def semantic_search_node(
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={"dims": 384, "embed": _embeddings.aembed_documents},
-    ) as store:
+    )
+    async with store:
         results = await store.asearch(("logs",), query=user_query, limit=5)
 
     if not results:
@@ -241,10 +242,11 @@ async def neo4j_context_node(
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={"dims": 384, "embed": _embeddings.aembed_documents},
-    ) as store:
+    )
+    async with store:
         results = await store.asearch(("logs",), query=f"session {session_id}", limit=50)
 
     entries = [r.value for r in results if r.value.get("session_id") == session_id]
@@ -377,10 +379,11 @@ async def trend_analysis_node(
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={"dims": 384, "embed": _embeddings.aembed_documents},
-    ) as store:
+    )
+    async with store:
         results = await store.asearch(("logs",), query=metric, limit=200)
 
     entries = [r.value for r in results]

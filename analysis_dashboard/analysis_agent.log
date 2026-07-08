@@ -133,3 +133,53 @@ Log entries processed: 16
 [2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Proxy SHAP complete: {'latency_ms': 0.0, 'payload_len': 0.0192, 'call_frequency': 0.05, 'error_count': 0.2}
 [2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Explainability audit complete for session 3f654dbb... dominant_feature=error_count
 [2026-06-21 22:15:05] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
+[2026-07-07 23:30:15] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-07-07 23:37:09] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-07-07 23:37:29] [ANALYSIS] [INFO] [xai] Starting explainability audit for session_id=3f654dbb-9888-4e5a-93fe-782f141cae38
+[2026-07-07 23:37:29] [ANALYSIS] [INFO] [xai] Hydrating Neo4j context for session_id=3f654dbb-9888-4e5a-93fe-782f141cae38
+[2026-07-07 23:37:30] [ANALYSIS] [WARNING] [xai] Neo4j hydration failed due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known
+[2026-07-07 23:37:30] [ANALYSIS] [INFO] [xai] Running actual LIME explanation on unstructured log text
+[2026-07-07 23:37:30] [ANALYSIS] [INFO] [xai] Actual LIME complete. Top features: 10
+[2026-07-07 23:37:30] [ANALYSIS] [INFO] [xai] Running actual SHAP explanation on structured execution parameters
+[2026-07-07 23:37:30] [ANALYSIS] [INFO] [xai] Actual SHAP complete: {'latency_ms': 0.07109, 'payload_len': 0.01845, 'call_frequency': -0.00595, 'error_count': 0.36257}
+[2026-07-07 23:37:30] [ANALYSIS] [INFO] [xai] Explainability audit complete for session 3f654dbb... dominant_feature=error_count
+[2026-07-07 23:37:30] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
+[2026-07-08 18:18:43] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-07-08 18:18:43] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-07-08 18:18:45] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-07-08 18:34:31] [ANALYSIS] [INFO] [xai] Starting explainability audit for session_id=ae4529fe-ff44-4f9e-ba73-f95ec33318d3
+[2026-07-08 18:34:33] [ANALYSIS] [INFO] [xai] Hydrating Neo4j context for session_id=ae4529fe-ff44-4f9e-ba73-f95ec33318d3
+[2026-07-08 18:34:33] [ANALYSIS] [WARNING] [xai] Neo4j hydration failed due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known
+[2026-07-08 18:34:33] [ANALYSIS] [INFO] [xai] Running actual LIME explanation on unstructured log text
+[2026-07-08 18:34:36] [ANALYSIS] [INFO] [xai] Actual LIME complete. Top features: 10
+[2026-07-08 18:34:36] [ANALYSIS] [INFO] [xai] Running actual SHAP explanation on structured execution parameters
+[2026-07-08 18:34:36] [ANALYSIS] [INFO] [xai] Actual SHAP complete: {'latency_ms': 0.07976, 'payload_len': 0.09579, 'call_frequency': -0.01295, 'error_count': -0.45594}
+[2026-07-08 18:34:36] [ANALYSIS] [INFO] [xai] Explainability audit complete for session ae4529fe... dominant_feature=error_count
+[2026-07-08 18:34:36] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
+[2026-07-08 18:39:45] [ANALYSIS] [INFO] [xai] Starting explainability audit for session_id=4d153d43-2bba-49f8-8482-1bc51870e0b1
+[2026-07-08 18:39:47] [ANALYSIS] [INFO] [xai] Hydrating Neo4j context for session_id=4d153d43-2bba-49f8-8482-1bc51870e0b1
+[2026-07-08 18:39:47] [ANALYSIS] [WARNING] [xai] Neo4j hydration failed due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known
+[2026-07-08 18:39:47] [ANALYSIS] [INFO] [xai] Running actual LIME explanation on unstructured log text
+[2026-07-08 18:40:10] [ANALYSIS] [INFO] [xai] Actual LIME complete. Top features: 10
+[2026-07-08 18:40:10] [ANALYSIS] [INFO] [xai] Running actual SHAP explanation on structured execution parameters
+[2026-07-08 18:40:11] [ANALYSIS] [INFO] [xai] Actual SHAP complete: {'latency_ms': 0.07976, 'payload_len': 0.09579, 'call_frequency': -0.01295, 'error_count': -0.45594}
+[2026-07-08 18:40:11] [ANALYSIS] [INFO] [xai] Explainability audit complete for session 4d153d43... dominant_feature=error_count
+[2026-07-08 18:40:11] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
+[2026-07-08 18:40:34] [ANALYSIS] [INFO] [xai] Starting explainability audit for session_id=19db34c3-eb33-4c67-a1a7-d88997c5bfd6
+[2026-07-08 18:40:37] [ANALYSIS] [INFO] [xai] Hydrating Neo4j context for session_id=19db34c3-eb33-4c67-a1a7-d88997c5bfd6
+[2026-07-08 18:40:37] [ANALYSIS] [WARNING] [xai] Neo4j hydration failed due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known
+[2026-07-08 18:40:37] [ANALYSIS] [INFO] [xai] Running actual LIME explanation on unstructured log text
+[2026-07-08 18:40:38] [ANALYSIS] [INFO] [xai] Actual LIME complete. Top features: 10
+[2026-07-08 18:40:38] [ANALYSIS] [INFO] [xai] Running actual SHAP explanation on structured execution parameters
+[2026-07-08 18:40:38] [ANALYSIS] [INFO] [xai] Actual SHAP complete: {'latency_ms': 0.1142, 'payload_len': 0.04779, 'call_frequency': 0.05981, 'error_count': -0.41513}
+[2026-07-08 18:40:38] [ANALYSIS] [INFO] [xai] Explainability audit complete for session 19db34c3... dominant_feature=error_count
+[2026-07-08 18:40:38] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
+[2026-07-08 18:40:53] [ANALYSIS] [INFO] [xai] Starting explainability audit for session_id=ae4529fe-ff44-4f9e-ba73-f95ec33318d3
+[2026-07-08 18:40:57] [ANALYSIS] [INFO] [xai] Hydrating Neo4j context for session_id=ae4529fe-ff44-4f9e-ba73-f95ec33318d3
+[2026-07-08 18:40:57] [ANALYSIS] [WARNING] [xai] Neo4j hydration failed due to connection error: Failed to DNS resolve address 1148a838.databases.neo4j.io:7687: [Errno 8] nodename nor servname provided, or not known
+[2026-07-08 18:40:57] [ANALYSIS] [INFO] [xai] Running actual LIME explanation on unstructured log text
+[2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Actual LIME complete. Top features: 10
+[2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Running actual SHAP explanation on structured execution parameters
+[2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Actual SHAP complete: {'latency_ms': 0.07976, 'payload_len': 0.09579, 'call_frequency': -0.01295, 'error_count': -0.45594}
+[2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Explainability audit complete for session ae4529fe... dominant_feature=error_count
+[2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json

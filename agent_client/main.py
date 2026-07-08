@@ -10,7 +10,200 @@ from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.tools import tool
 from langchain.agents import create_agent
-from langgraph.store.sqlite.aio import AsyncSqliteStore
+import asyncpg
+import json
+
+class StoreResult:
+    def __init__(self, key: str, namespace: tuple[str, ...], value: dict):
+        self.key = key
+        self.namespace = namespace
+        self.value = value
+
+class PostgresStore:
+    def __init__(self, pool, embeddings_obj=None):
+        self.pool = pool
+        self.embeddings = embeddings_obj
+
+    @classmethod
+    async def from_conn_string(cls, conn_string, index=None):
+        import os
+        # We prefer DATABASE_URL or SUPABASE_URL from environment
+        db_url = os.getenv("DATABASE_URL") or os.getenv("SUPABASE_URL")
+        if not db_url:
+            db_url = "postgresql://daviddozie@localhost:5432/postgres"
+            
+        # Clean pgbouncer parameter for asyncpg
+        db_url_clean = db_url.replace("?pgbouncer=true", "")
+        
+        pool = await asyncpg.create_pool(dsn=db_url_clean, statement_cache_size=0)
+        
+        embeddings_obj = None
+        if index and "embed" in index:
+            class Embedder:
+                def __init__(self, embed_fn):
+                    self.embed_fn = embed_fn
+                async def aembed_query(self, text: str):
+                    res = await self.embed_fn([text])
+                    return res[0]
+            embeddings_obj = Embedder(index["embed"])
+            
+        return cls(pool, embeddings_obj)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self.pool:
+            await self.pool.close()
+
+    async def aput(self, namespace: tuple[str, ...], key: str, value: dict) -> None:
+        from datetime import datetime, timezone
+        
+        session_id = value.get("session_id")
+        mcp_interaction_type = value.get("mcp_interaction_type", "unknown")
+        component = value.get("component", "client")
+        level = value.get("level", "INFO")
+        content = value.get("content", "")
+        
+        # Parse timestamp
+        timestamp_str = value.get("timestamp")
+        timestamp = None
+        if timestamp_str:
+            try:
+                timestamp = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
+            except Exception:
+                pass
+        if not timestamp:
+            timestamp = datetime.now(timezone.utc)
+            
+        # Generate embedding if embedder is set
+        embedding = None
+        if self.embeddings and content:
+            try:
+                embedding = await self.embeddings.aembed_query(content)
+            except Exception as e:
+                import logging
+                logging.getLogger("agri_agent").warning(f"Failed to generate embedding for trace log: {e}")
+
+        if embedding is not None:
+            embedding = str(embedding)
+
+        async with self.pool.acquire() as conn:
+            # 1. Ensure the session exists in the sessions table due to FK constraints
+            if session_id:
+                query = None
+                if mcp_interaction_type == "agent_planning" and content.startswith("Agent session started. User query: "):
+                    query = content.replace("Agent session started. User query: ", "")
+                    
+                await conn.execute(
+                    """
+                    INSERT INTO sessions (session_id, query, created_at)
+                    VALUES ($1, $2, $3)
+                    ON CONFLICT (session_id) DO UPDATE
+                    SET query = COALESCE(sessions.query, EXCLUDED.query)
+                    """,
+                    session_id,
+                    query,
+                    timestamp
+                )
+                
+            # 2. Insert into trace_logs
+            await conn.execute(
+                """
+                INSERT INTO trace_logs (session_id, namespace, key, value, mcp_interaction_type, component, level, timestamp, embedding)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                """,
+                session_id,
+                list(namespace),
+                key,
+                json.dumps(value),
+                mcp_interaction_type,
+                component,
+                level,
+                timestamp,
+                embedding
+            )
+            
+            # 3. Relational mapping to tool_invocations
+            if mcp_interaction_type in ("resource_read", "tool_invocation"):
+                tool_name = "reflect_on_answer" if mcp_interaction_type == "tool_invocation" else "crag_knowledge_tool"
+                query_text = content
+                for prefix_pattern in [
+                    "CRAG resource queried: ",
+                    "CRAG resource response received for query: ",
+                    "reflect_on_answer invoked. Query: ",
+                    "reflect_on_answer tool response received. Query: "
+                ]:
+                    if content.startswith(prefix_pattern):
+                        query_text = content.replace(prefix_pattern, "")
+                        break
+                is_end = "response received" in content
+                response_text = "Response received." if is_end else "Invocation initiated (no response logged)."
+                
+                await conn.execute(
+                    """
+                    INSERT INTO tool_invocations (session_id, tool_name, query, response, timestamp)
+                    VALUES ($1, $2, $3, $4, $5)
+                    """,
+                    session_id,
+                    tool_name,
+                    query_text,
+                    response_text,
+                    timestamp
+                )
+                
+            # 4. Relational mapping to runtime_exceptions
+            if level == "ERROR" or "error" in content.lower():
+                await conn.execute(
+                    """
+                    INSERT INTO runtime_exceptions (session_id, exception_type, message, traceback, timestamp)
+                    VALUES ($1, $2, $3, $4, $5)
+                    """,
+                    session_id,
+                    "Log Error Alert" if level == "ERROR" else "Exception Detected",
+                    content,
+                    content,
+                    timestamp
+                )
+
+    async def asearch(self, namespace: tuple[str, ...], query: str, limit: int = 5):
+        embedding = None
+        if self.embeddings:
+            try:
+                embedding = await self.embeddings.aembed_query(query)
+            except Exception:
+                pass
+                
+        if embedding is not None:
+            embedding = str(embedding)
+                
+        async with self.pool.acquire() as conn:
+            if embedding:
+                rows = await conn.fetch(
+                    """
+                    SELECT key, namespace, value
+                    FROM trace_logs
+                    WHERE namespace @> $1::text[]
+                    ORDER BY embedding <=> $2::vector
+                    LIMIT $3
+                    """,
+                    list(namespace),
+                    embedding,
+                    limit
+                )
+            else:
+                rows = await conn.fetch(
+                    """
+                    SELECT key, namespace, value
+                    FROM trace_logs
+                    WHERE namespace @> $1::text[]
+                    ORDER BY timestamp DESC
+                    LIMIT $2
+                    """,
+                    list(namespace),
+                    limit
+                )
+        return [StoreResult(r["key"], tuple(r["namespace"]), r["value"]) for r in rows]
 from mcp.types import (
     CreateMessageRequestParams,
     CreateMessageResult,
@@ -74,13 +267,32 @@ def _make_raw_llm(temperature: float = 0.3) -> ChatOpenAI:
         max_retries=MAX_RETRY_ATTEMPTS,
     )
 
-llm = _make_raw_llm(temperature=0.3)
+class ChatModelWithRetry:
+    def __init__(self, base_model, max_retries):
+        self.base_model = base_model
+        self.max_retries = max_retries
 
-llm_with_retry = llm.with_retry(
-    retry_if_exception_type=(Exception,),
-    wait_exponential_jitter=True,
-    stop_after_attempt=MAX_RETRY_ATTEMPTS,
-)
+    def bind_tools(self, tools, **kwargs):
+        bound = self.base_model.bind_tools(tools, **kwargs)
+        return bound.with_retry(
+            retry_if_exception_type=(Exception,),
+            wait_exponential_jitter=True,
+            stop_after_attempt=self.max_retries,
+        )
+
+    def bind(self, **kwargs):
+        bound = self.base_model.bind(**kwargs)
+        return bound.with_retry(
+            retry_if_exception_type=(Exception,),
+            wait_exponential_jitter=True,
+            stop_after_attempt=self.max_retries,
+        )
+
+    def __getattr__(self, name):
+        return getattr(self.base_model, name)
+
+llm = _make_raw_llm(temperature=0.3)
+llm_with_retry = ChatModelWithRetry(llm, MAX_RETRY_ATTEMPTS)
 
 embeddings = HuggingFaceEmbeddings(
     model_name=_embedding_model,
@@ -176,6 +388,92 @@ async def write_structured_log(
     logger.debug(f"Structured log written → namespace={namespace} type={mcp_interaction_type}")
 
 
+import numpy as np
+import redis
+
+class RedisSemanticCache:
+    def __init__(self, host="localhost", port=6379, password=None, distance_threshold=0.15, embeddings_obj=None):
+        self.client = redis.Redis(host=host, port=port, password=password, decode_responses=True)
+        self.embeddings = embeddings_obj
+        self.distance_threshold = distance_threshold
+
+    def _cosine_distance(self, v1, v2):
+        dot_product = np.dot(v1, v2)
+        norm_v1 = np.linalg.norm(v1)
+        norm_v2 = np.linalg.norm(v2)
+        if norm_v1 == 0 or norm_v2 == 0:
+            return 1.0
+        similarity = dot_product / (norm_v1 * norm_v2)
+        return 1.0 - similarity
+
+    async def check(self, prompt: str) -> str | None:
+        if not self.embeddings:
+            return None
+        
+        try:
+            query_vector = await self.embeddings.aembed_query(prompt)
+            query_vector = np.array(query_vector)
+            
+            keys = self.client.keys("cache:semantic:*")
+            best_dist = 1.0
+            best_val = None
+            
+            for key in keys:
+                data_str = self.client.get(key)
+                if not data_str:
+                    continue
+                try:
+                    data = json.loads(data_str)
+                    cached_vector = np.array(data["embedding"])
+                    dist = self._cosine_distance(query_vector, cached_vector)
+                    if dist < best_dist:
+                        best_dist = dist
+                        best_val = data["response"]
+                except Exception:
+                    continue
+            
+            if best_dist <= self.distance_threshold:
+                # Telemetry update
+                self.client.incr("telemetry:cache_hits")
+                prompt_tokens = len(prompt) // 4
+                response_tokens = len(best_val) // 4
+                self.client.incrby("telemetry:tokens_saved", prompt_tokens + response_tokens)
+                
+                # cost calculations: input = $0.15/M tokens, output = $0.60/M tokens
+                # savings in micro-dollars
+                micro_saved = int((prompt_tokens * 0.15 + response_tokens * 0.60))
+                self.client.incrby("telemetry:cost_saved_micro", micro_saved)
+                
+                logger.info(
+                    f"[REDIS SEMANTIC CACHE HIT] dist={best_dist:.4f} <= {self.distance_threshold} | Bypassing LLM."
+                )
+                return best_val
+                
+        except Exception as e:
+            logger.error(f"Error checking semantic cache: {e}")
+            
+        return None
+
+    async def set(self, prompt: str, response: str) -> None:
+        if not self.embeddings:
+            return
+            
+        try:
+            vector = await self.embeddings.aembed_query(prompt)
+            key = f"cache:semantic:{str(uuid.uuid4())}"
+            data = {
+                "prompt": prompt,
+                "embedding": vector,
+                "response": response,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+            self.client.set(key, json.dumps(data))
+            
+            self.client.incr("telemetry:cache_misses")
+            
+        except Exception as e:
+            logger.error(f"Error setting semantic cache: {e}")
+
 # Sampling handler
 async def sampling_handler(
     messages: list,
@@ -193,9 +491,44 @@ async def sampling_handler(
     if max_tokens is None:
         max_tokens = getattr(params, "maxTokens", None)
 
+    # Initialize Cache
+    import os
+    redis_host = os.getenv("REDIS_HOST", "localhost")
+    redis_port = int(os.getenv("REDIS_PORT", "6379"))
+    redis_pass = os.getenv("REDIS_PASSWORD") or None
+    
+    cache = RedisSemanticCache(
+        host=redis_host,
+        port=redis_port,
+        password=redis_pass,
+        distance_threshold=0.15,
+        embeddings_obj=embeddings
+    )
+    
+    start_time = datetime.now()
+    
+    # Check Cache
+    cached_val = await cache.check(prompt_text)
+    if cached_val is not None:
+        elapsed = (datetime.now() - start_time).total_seconds() * 1000
+        cache.client.set("telemetry:latest_hit_latency_ms", f"{elapsed:.2f}")
+        return CreateMessageResult(
+            role="assistant",
+            content=TextContent(type="text", text=cached_val),
+            model=_model_name,
+            stopReason="endTurn",
+        )
+
+    # Cache Miss: Run LLM
     call_chain = get_sampling_chain(max_tokens)
     response = await call_chain.ainvoke({"input": prompt_text})
     result_text = response.content
+    
+    elapsed = (datetime.now() - start_time).total_seconds() * 1000
+    cache.client.set("telemetry:latest_miss_latency_ms", f"{elapsed:.2f}")
+
+    # Set Cache
+    await cache.set(prompt_text, result_text)
 
     logger.info("MCP Sampling complete, returning result to server")
 
@@ -214,13 +547,14 @@ async def run_agent(user_query: str):
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={
             "dims": 384,
             "embed": embeddings.aembed_documents,
         },
-    ) as store:
+    )
+    async with store:
         logger.info(f"AsyncSqliteStore initialised: {db_path}")
 
         await write_structured_log(

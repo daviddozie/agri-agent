@@ -16,7 +16,7 @@ from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain_huggingface import HuggingFaceEmbeddings
-from langgraph.store.sqlite.aio import AsyncSqliteStore
+from postgres_store import PostgresStore
 
 load_dotenv(Path(__file__).parent / ".env")
 
@@ -70,13 +70,14 @@ async def semantic_log_search(query: str, top_k: int = 5) -> str:
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={
             "dims": 384,
             "embed": embeddings.aembed_documents,
         },
-    ) as store:
+    )
+    async with store:
         results = await store.asearch(
             ("logs",),
             query=query,
@@ -117,13 +118,14 @@ async def map_to_neo4j(session_id: str) -> str:
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={
             "dims": 384,
             "embed": embeddings.aembed_documents,
         },
-    ) as store:
+    )
+    async with store:
         results = await store.asearch(
             ("logs",),
             query=f"session {session_id}",
@@ -260,13 +262,14 @@ async def compute_trend_metrics(metric: str = "interaction_types") -> str:
 
     db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-    async with AsyncSqliteStore.from_conn_string(
+    store = await PostgresStore.from_conn_string(
         db_path,
         index={
             "dims": 384,
             "embed": embeddings.aembed_documents,
         },
-    ) as store:
+    )
+    async with store:
         results = await store.asearch(
             ("logs",),
             query=metric,
