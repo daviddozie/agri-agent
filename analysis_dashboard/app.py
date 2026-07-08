@@ -21,39 +21,72 @@ sys.path.append(str(Path(__file__).parent))
 from explainability_engine import run_explainability_audit, save_audit_report
 
 def get_recent_sessions():
-    db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
-    if not os.path.exists(db_path):
-        return []
+    import psycopg2
+    import redis
+    import json
+    
+    redis_host = os.getenv("REDIS_HOST", "localhost")
+    redis_port = int(os.getenv("REDIS_PORT", "6379"))
+    redis_pass = os.getenv("REDIS_PASSWORD") or None
+    r = redis.Redis(host=redis_host, port=redis_port, password=redis_pass, decode_responses=True)
+    
+    cache_key = "cache:ui:recent_sessions"
     try:
-        conn = sqlite3.connect(db_path)
-        rows = conn.execute("SELECT value FROM store").fetchall()
-        sessions = {}
-        for row in rows:
-            try:
-                val = json.loads(row[0].decode('utf-8') if isinstance(row[0], bytes) else row[0])
-                sid = val.get("session_id")
-                if sid:
-                    if sid not in sessions:
-                        sessions[sid] = {"has_error": False, "query": "", "logs_count": 0}
-                    sessions[sid]["logs_count"] += 1
-                    if val.get("level") == "ERROR":
-                        sessions[sid]["has_error"] = True
-                    if val.get("mcp_interaction_type") == "agent_planning" and not sessions[sid]["query"]:
-                        sessions[sid]["query"] = val.get("content", "")
-            except Exception:
-                pass
+        cached = r.get(cache_key)
+        if cached:
+            r.incr("telemetry:cache_hits")
+            return json.loads(cached)
+    except Exception:
+        pass
+
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url or not (db_url.startswith("postgres://") or db_url.startswith("postgresql://")):
+        temp_url = os.getenv("SUPABASE_URL")
+        if temp_url and (temp_url.startswith("postgres://") or temp_url.startswith("postgresql://")):
+            db_url = temp_url
+    if not db_url:
+        db_url = "postgresql://daviddozie@localhost:5432/postgres"
+    
+    db_url_clean = db_url.replace("?pgbouncer=true", "")
+    try:
+        conn = psycopg2.connect(db_url_clean)
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT 
+                s.session_id, 
+                s.query, 
+                COUNT(t.id) as logs_count,
+                EXISTS(SELECT 1 FROM trace_logs tl WHERE tl.session_id = s.session_id AND tl.level = 'ERROR') as has_error
+            FROM sessions s
+            LEFT JOIN trace_logs t ON t.session_id = s.session_id
+            GROUP BY s.session_id, s.query, s.created_at
+            ORDER BY s.created_at DESC
+            """
+        )
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
         
-        # Sort sessions
         sorted_sessions = []
-        for sid, info in sessions.items():
-            status = "ERROR" if info["has_error"] else "SUCCESS"
-            short_query = info["query"][:60] + "..." if len(info["query"]) > 60 else info["query"]
-            label = f"{sid[:8]}... | {status} | Logs: {info['logs_count']} | '{short_query}'"
-            sorted_sessions.append((sid, label))
+        for session_id, query, logs_count, has_error in rows:
+            status = "ERROR" if has_error else "SUCCESS"
+            q_text = query or "No query logged"
+            short_query = q_text[:60] + "..." if len(q_text) > 60 else q_text
+            label = f"{session_id[:8]}... | {status} | Logs: {logs_count} | '{short_query}'"
+            sorted_sessions.append((session_id, label))
+            
+        try:
+            r.set(cache_key, json.dumps(sorted_sessions), ex=10)  # cache for 10s
+        except Exception:
+            pass
+            
         return sorted_sessions
     except Exception as e:
-        st.error(f"Error reading session list: {e}")
+        st.error(f"Error reading session list from Postgres: {e}")
         return []
+
+
 
 # Page config
 st.set_page_config(
@@ -346,17 +379,36 @@ with right_col:
 
     if show_resilience:
         async def _fetch_resilience_counts():
+            import redis
+            import json
+            
+            redis_host = os.getenv("REDIS_HOST", "localhost")
+            redis_port = int(os.getenv("REDIS_PORT", "6379"))
+            redis_pass = os.getenv("REDIS_PASSWORD") or None
+            r = redis.Redis(host=redis_host, port=redis_port, password=redis_pass, decode_responses=True)
+            
+            cache_key = "cache:ui:resilience_counts"
+            try:
+                cached = r.get(cache_key)
+                if cached:
+                    r.incr("telemetry:cache_hits")
+                    val = json.loads(cached)
+                    return val[0], val[1]
+            except Exception:
+                pass
+
             from langchain_huggingface import HuggingFaceEmbeddings
-            from langgraph.store.sqlite.aio import AsyncSqliteStore
+            from postgres_store import PostgresStore
 
             embed_model = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
             embeddings = HuggingFaceEmbeddings(model_name=embed_model)
             resilience_db_path = os.getenv("SQLITE_DB_PATH", "mcp_agent_log.db")
 
-            async with AsyncSqliteStore.from_conn_string(
+            resilience_store = await PostgresStore.from_conn_string(
                 resilience_db_path,
                 index={"dims": 384, "embed": embeddings.aembed_documents},
-            ) as resilience_store:
+            )
+            async with resilience_store:
                 results = await resilience_store.asearch(
                     ("logs", "resilience"),
                     query="fallback retry resilience event",
@@ -371,6 +423,11 @@ with right_col:
                     self_healing += 1
                 elif "hardcoded_absolute" in namespace_str:
                     hardcoded += 1
+
+            try:
+                r.set(cache_key, json.dumps([self_healing, hardcoded]), ex=15)  # cache for 15s
+            except Exception:
+                pass
 
             return self_healing, hardcoded
 
@@ -399,3 +456,77 @@ with right_col:
                 f"{self_healing_count} self-healing fallback(s) activated. "
                 "System recovered without reaching catastrophic failure."
             )
+
+    st.divider()
+    
+    st.subheader("⚡ Caching Telemetry & Optimization")
+    st.caption("Real-time distributed Redis cache performance and savings matrix")
+
+    import redis
+    redis_host = os.getenv("REDIS_HOST", "localhost")
+    redis_port = int(os.getenv("REDIS_PORT", "6379"))
+    redis_pass = os.getenv("REDIS_PASSWORD") or None
+    try:
+        r = redis.Redis(host=redis_host, port=redis_port, password=redis_pass, decode_responses=True)
+        
+        hits = int(r.get("telemetry:cache_hits") or 0)
+        misses = int(r.get("telemetry:cache_misses") or 0)
+        tokens_saved = int(r.get("telemetry:tokens_saved") or 0)
+        cost_saved_micro = int(r.get("telemetry:cost_saved_micro") or 0)
+        cost_saved_usd = cost_saved_micro / 1000000.0
+        
+        total_requests = hits + misses
+        hit_rate = (hits / total_requests * 100) if total_requests > 0 else 0.0
+        
+        latest_hit_latency = r.get("telemetry:latest_hit_latency_ms") or "0.0"
+        latest_miss_latency = r.get("telemetry:latest_miss_latency_ms") or "0.0"
+        
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            st.metric("Cache Hit Rate", f"{hit_rate:.1f}%", help="Percentage of LLM/UI queries bypassed via Redis")
+            st.metric("Estimated Cost Savings", f"${cost_saved_usd:.6f}", help="Total dollars saved by bypassing downstream APIs")
+        with col_t2:
+            st.metric("Total Tokens Saved", f"{tokens_saved:,}", help="Total input & output tokens short-circuited")
+            st.metric("Cache Hits / Misses", f"{hits} / {misses}", help="Hits versus misses in current deployment")
+
+        st.subheader("⏱️ Latency Delta Metrics")
+        col_l1, col_l2 = st.columns(2)
+        with col_l1:
+            st.metric("Latest Cache Hit Latency", f"{float(latest_hit_latency):.2f} ms", delta="Lightning Fast", delta_color="normal")
+        with col_l2:
+            st.metric("Latest Un-cached Latency", f"{float(latest_miss_latency):.2f} ms", delta="Standard LLM Roundtrip", delta_color="inverse")
+            
+        st.subheader("🧹 Cache Invalidation Hub")
+        st.caption("Flush specific namespaces of the distributed Redis cache")
+        
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            if st.button("Purge UI Cache", use_container_width=True):
+                ui_keys = r.keys("cache:ui:*")
+                if ui_keys:
+                    r.delete(*ui_keys)
+                st.success("UI Cache Purged!")
+                st.rerun()
+                
+            if st.button("Purge Agent Memory", use_container_width=True):
+                mem_keys = r.keys("cache:semantic:*")
+                if mem_keys:
+                    r.delete(*mem_keys)
+                st.success("Semantic Memory Cleared!")
+                st.rerun()
+                
+        with col_b2:
+            if st.button("Purge Graph Context", use_container_width=True):
+                graph_keys = r.keys("cache:neo4j:*")
+                if graph_keys:
+                    r.delete(*graph_keys)
+                st.success("Neo4j Cache Purged!")
+                st.rerun()
+                
+            if st.button("Flush All Cache", use_container_width=True, type="primary"):
+                r.flushall()
+                st.success("Entire Redis Cache Flushed!")
+                st.rerun()
+                
+    except Exception as cache_err:
+        st.error(f"Failed to connect to Redis for telemetry: {cache_err}")

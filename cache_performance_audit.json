@@ -1,0 +1,32 @@
+{
+  "audit_timestamp": "2026-07-08T18:13:54Z",
+  "redis_semantic_cache_configuration": {
+    "host": "localhost",
+    "port": 6379,
+    "distance_threshold": 0.15,
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "vector_dimensions": 384
+  },
+  "cache_miss_record": {
+    "prompt_text": "What is the best crop rotation strategy for tomatoes to prevent blight?\n",
+    "response_text": "{\n  \" factual_errors\": [\n    \"The statement that a strict 3-year rotation is always the best strategy is overly prescriptive; rotation length should be adjusted based on local disease pressure and may be 2 years or longer.\"\n  ],\n  \"missing_points\": [\n    \"Does not mention the need to avoid all solanaceous crops (potatoes, peppers, eggplants) in the rotation, not just tomatoes.\"\n  ],\n  \"overall_quality\": \"fair\"\n}",
+    "latency_ms": 2910.48,
+    "outcome": "CACHE_MISS_EVALUATED_BY_LLM"
+  },
+  "cache_hit_record": {
+    "prompt_text": "What is the best crop rotation strategy for tomatoes to prevent blight?\n",
+    "cached_match_prompt_text": "What is the best crop rotation strategy for tomatoes to prevent blight?\n",
+    "distance": 0.0169,
+    "response_text": "{\n  \" factual_errors\": [\n    \"The statement that a strict 3-year rotation is always the best strategy is overly prescriptive; rotation length should be adjusted based on local disease pressure and may be 2 years or longer.\"\n  ],\n  \"missing_points\": [\n    \"Does not mention the need to avoid all solanaceous crops (potatoes, peppers, eggplants) in the rotation, not just tomatoes.\"\n  ],\n  \"overall_quality\": \"fair\"\n}",
+    "latency_ms": 98.91,
+    "outcome": "CACHE_HIT_BYPASSED_LLM"
+  },
+  "global_telemetry_matrix": {
+    "total_cache_hits": 6,
+    "total_cache_misses": 2,
+    "cache_hit_rate_percent": 75.0,
+    "total_tokens_saved": 3385,
+    "total_cost_saved_usd": 0.001188,
+    "latency_reduction_ratio": "29.42x faster"
+  }
+}

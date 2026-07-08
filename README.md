@@ -1,6 +1,6 @@
-# Agri Agent Stage 4 — Resilient Execution, Edgeless StateGraph Analysis, and Contextual XAI
+# Agri Agent Stage 5 — Cloud-Persistent Storage & Distributed Multi-Tier Redis Caching
 
-A production-grade, multi-agent diagnostic system extending the Stage 3 MCP agricultural advisory agent with strict execution resilience (RunnableWithRetry & RunnableWithFallbacks), an edgeless LangGraph StateGraph, and local explainability audits (SHAP/LIME).
+A production-grade, multi-agent diagnostic system extending the Stage 4 MCP agricultural advisory agent with dynamic connection-pooled PostgreSQL storage (Supabase), pgvector similarity searches, and distributed multi-tier Redis caching (semantic client cache, explainability cache, and UI optimization cache.
 
 ---
 
@@ -12,10 +12,12 @@ agri-agent/
 ├── .env.example                    ← environment variable reference
 ├── README.md
 ├── REFLECTION_STAGE3.md
-├── REFLECTION_STAGE4.md            ← Stage 4 conceptual analysis
+├── REFLECTION_STAGE4.md
+├── REFLECTION_STAGE5.md            ← Stage 5 conceptual analysis
+├── migrate.py                      ← database migration script
+├── cache_performance_audit.json    ← semantic cache audit record
 ├── explainability_audit_report.json ← compliance audit export
 ├── mcp_agent_system.log            ← sample log from test execution
-├── mcp_agent_log.db                ← SQLite vector log store
 ├── mcp_server/
 │   ├── pyproject.toml
 │   ├── main.py                     ← FastMCP server
@@ -23,16 +25,16 @@ agri-agent/
 │   └── .env
 ├── agent_client/
 │   ├── pyproject.toml
-│   ├── main.py                     ← LangChain agent with fallback & retries
+│   ├── main.py                     ← LangChain agent with Redis semantic cache
 │   └── .env
 └── analysis_dashboard/
     ├── pyproject.toml
     ├── agent.py                    ← Log Analysis Agent definitions
-    ├── app.py                      ← Streamlit UI (chat + XAI tabs)
-    ├── explainability_engine.py    ← LIME/SHAP calculation engine
-    ├── graph_nodes.py              ← StateGraph nodes (edgeless)
+    ├── app.py                      ← Streamlit UI (with telemetry & invalidation hub)
+    ├── explainability_engine.py    ← LIME/SHAP calculation engine with Redis caching
+    ├── graph_nodes.py              ← StateGraph nodes (Postgres-backed)
     ├── graph_builder.py            ← StateGraph compiler
-    ├── analysis_agent.log          ← sample analysis agent log
+    ├── postgres_store.py           ← Postgres pgvector storage helper
     └── .env
 ```
 
@@ -41,30 +43,28 @@ agri-agent/
 ## System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Terminal 1 — MCP Server                  │
-│  FastMCP · streamable-http · port 8000                      │
-│  CRAG resource + reflect_on_answer tool                     │
-│  ctx.sample() → delegates LLM to client                     │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ streamable-http
-┌──────────────────────────▼──────────────────────────────────┐
-│                   Terminal 2 — Agent Client                 │
-│  LangChain create_agent · FastMCP Client                    │
-│  sampling_handler · server log relay                        │
-│  AsyncSqliteStore → mcp_agent_log.db                        │
-│  Hierarchical namespaces + HuggingFace embeddings           │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ reads mcp_agent_log.db
-┌──────────────────────────▼──────────────────────────────────┐
-│               Terminal 3 — Analysis Dashboard               │
-│  Log Analysis Agent (create_agent)                          │
-│    ├── semantic_log_search  (vector search)                 │
-│    ├── map_to_neo4j         (Neo4j Aura DB)                 │
-│    ├── compute_trend_metrics (operational metrics)          │
-│    └── generate_chart       (matplotlib/seaborn)            │
-│  Streamlit UI · http://localhost:8501                       │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Terminal 1 — MCP Server                         │
+│  FastMCP · streamable-http · port 8000                                 │
+│  CRAG resource + reflect_on_answer tool                                │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ streamable-http
+┌───────────────────────────────────▼────────────────────────────────────┐
+│                       Terminal 2 — Agent Client                        │
+│  LangChain create_agent · FastMCP Client                               │
+│  sampling_handler · server log relay                                   │
+│  PostgresStore → Supabase (PostgreSQL + pgvector)                      │
+│  Tier 1 Semantic Cache: RedisSemanticCache (MiniLM embeddings)         │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ reads Supabase & caches in Redis
+┌───────────────────────────────────▼────────────────────────────────────┐
+│                    Terminal 3 — Analysis Dashboard                     │
+│  Log Analysis Agent (create_agent)                                     │
+│    ├── semantic_log_search  (Supabase pgvector)                        │
+│    ├── map_to_neo4j         (Neo4j Aura DB - Tier 2 cache)             │
+│    └── compute_trend_metrics (PostgreSQL counts - Tier 3 cache)        │
+│  Streamlit UI · http://localhost:8501 (Telemetry + Invalidation Hub)   │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -75,6 +75,8 @@ agri-agent/
 - `uv` → https://astral.sh/uv
 - OpenRouter API key → https://openrouter.ai
 - Tavily API key → https://tavily.com
+- Redis server (local or cloud-hosted instance)
+- Supabase project (PostgreSQL database with pgvector extension enabled)
 - Neo4j Aura DB free instance → https://neo4j.com/cloud/aura-free
 
 ---
@@ -96,30 +98,33 @@ uv sync
 
 **3. Set up environment variables**
 
-Copy `.env.example` as a reference and create `.env` files in each package:
+Copy `.env.example` as a reference and create `.env` files in root, `agent_client`, and `analysis_dashboard` packages:
 
-`mcp_server/.env`:
 ```env
+OPENROUTER_API_KEY=your_openrouter_key
 TAVILY_API_KEY=your_tavily_key
-MCP_HOST=0.0.0.0
-MCP_PORT=8000
-```
-
-`agent_client/.env`:
-```env
-OPENROUTER_API_KEY=your_openrouter_key
-SQLITE_DB_PATH=mcp_agent_log.db
 HF_TOKEN=your_huggingface_token
-```
 
-`analysis_dashboard/.env`:
-```env
-OPENROUTER_API_KEY=your_openrouter_key
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# Supabase / PostgreSQL Configuration
+SUPABASE_URL=https://xxxxxxxx.supabase.co/rest/v1/
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+DATABASE_URL="postgresql://postgres.xxxxxx:password@aws-0-pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# Neo4j Graph Settings
 NEO4J_URI=neo4j+s://xxxxxxxx.databases.neo4j.io
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=your_neo4j_password
-SQLITE_DB_PATH=mcp_agent_log.db
-HF_TOKEN=your_huggingface_token
+```
+
+**4. Run Database Migration**
+Run the migration script to migrate old SQLite logs to your new cloud-native Supabase PostgreSQL database:
+```bash
+uv run python migrate.py
 ```
 
 ---
