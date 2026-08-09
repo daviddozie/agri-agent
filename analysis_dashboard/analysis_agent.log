@@ -183,3 +183,11 @@ Log entries processed: 16
 [2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Actual SHAP complete: {'latency_ms': 0.07976, 'payload_len': 0.09579, 'call_frequency': -0.01295, 'error_count': -0.45594}
 [2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Explainability audit complete for session ae4529fe... dominant_feature=error_count
 [2026-07-08 18:40:58] [ANALYSIS] [INFO] [xai] Audit report saved to /Users/daviddozie/agri-agent/explainability_audit_report.json
+[2026-08-09 19:49:09] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-08-09 19:54:08] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-08-09 20:00:01] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).
+[2026-08-09 20:00:01] [ANALYSIS] [INFO] User query received: 'What are the most common interaction types? Show me a chart.'
+[2026-08-09 20:00:01] [ANALYSIS] [INFO] [initial_ingest_node] Classifying intent for query: 'What are the most common interaction types? Show me a chart.'
+[2026-08-09 20:00:05] [ANALYSIS] [INFO] [initial_ingest_node] Classified as 'chart_request' (session_id=12345) — The user asks for the most common interaction types and wants a chart, which is a frequency analysis request with a visualization requirement.
+[2026-08-09 20:00:05] [ANALYSIS] [INFO] [trend_analysis_node] Computing metric: interaction_types
+[2026-08-09 20:00:11] [ANALYSIS] [INFO] Edgeless Log Analysis StateGraph compiled. Static edges: 1 (START -> initial_ingest_node). All other routing is dynamic via Command(goto=...).

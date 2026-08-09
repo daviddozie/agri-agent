@@ -1,0 +1,599 @@
+{
+    "audit_generated_at": "'2026-08-09T00:00:00'::timestamp",
+    "total_sessions_audited": 8,
+    "total_transactions": 42,
+    "sessions": [
+        {
+            "session_id": "b0ba9f06-67a5-450e-b18c-221a1bde856b",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.005,
+            "incoming_earnings_usdc": 0.005,
+            "net_cost_usdc": 0.0,
+            "transaction_count": 2,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:44:55.341611",
+                    "session_id": "b0ba9f06-67a5-450e-b18c-221a1bde856b",
+                    "tx_hash": "0xf785088facaf15b3a638b39d888680c29efc55b50e96fbc0bc555d358d7efaa7",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                },
+                {
+                    "timestamp": "2026-08-09 19:44:55.308446",
+                    "session_id": "b0ba9f06-67a5-450e-b18c-221a1bde856b",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                }
+            ]
+        },
+        {
+            "session_id": "94451b36-5158-415e-a138-0409b5b5b953",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.005,
+            "incoming_earnings_usdc": 0.005,
+            "net_cost_usdc": 0.0,
+            "transaction_count": 2,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:43:42.235905",
+                    "session_id": "94451b36-5158-415e-a138-0409b5b5b953",
+                    "tx_hash": "0xde72702c29b3b8e8804458956e3c99043409b4ef41b55f07a8373ef291294cca",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                },
+                {
+                    "timestamp": "2026-08-09 19:43:42.189099",
+                    "session_id": "94451b36-5158-415e-a138-0409b5b5b953",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                }
+            ]
+        },
+        {
+            "session_id": "cd98d54d-2bdc-441d-bdb9-a4d2dc17fc3f",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.005,
+            "incoming_earnings_usdc": 0.005,
+            "net_cost_usdc": 0.0,
+            "transaction_count": 2,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:42:32.404966",
+                    "session_id": "cd98d54d-2bdc-441d-bdb9-a4d2dc17fc3f",
+                    "tx_hash": "0x6beeb8b5debeca4b6ec99eb5a172b3795bbd56c6f2b95113c04ad390d9ddec50",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: optimize soil health"
+                },
+                {
+                    "timestamp": "2026-08-09 19:42:32.387150",
+                    "session_id": "cd98d54d-2bdc-441d-bdb9-a4d2dc17fc3f",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: optimize soil health"
+                }
+            ]
+        },
+        {
+            "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.025,
+            "incoming_earnings_usdc": 0.025,
+            "net_cost_usdc": 0.0,
+            "transaction_count": 8,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:41:36.261493",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0xe66b6a55a24dca5fa30cb3574cfe9cdc5ecbe4039a8c26e465a7c38ac84fe657",
+                    "sender": "0xmockedserver",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:36.257891",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:36.167141",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0xf9e7be91210447462b8c2cfc54f93f1cbe595a123999769de92c789481f017cd",
+                    "sender": "0xmockedserver",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:36.164383",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:36.107671",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0x756710e3403fd7255141185f64c8aa265e68fc7c601c0a719269287b92813744",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:36.095464",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:30.475801",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0x9bf8254fac4300bc7f00e2e512ae6bd3e962207c80dd47a9a9e80be000df611b",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                },
+                {
+                    "timestamp": "2026-08-09 19:41:30.430166",
+                    "session_id": "bbcea910-8277-4b08-9cea-ffd5716ef4dc",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                }
+            ]
+        },
+        {
+            "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.025,
+            "incoming_earnings_usdc": 0.025,
+            "net_cost_usdc": 0.0,
+            "transaction_count": 8,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:40:34.554325",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0xcf055651e8ad90d1948ec7099d96cd1d8319f11d7017cd301fb2c21028e7c884",
+                    "sender": "0xmockedserver",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:34.550259",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:30.964981",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0xdc9ad80a5433858624db1142f3f37cd813d3346560677ee0a43242d1f7d723eb",
+                    "sender": "0xmockedserver",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:30.961660",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:30.856853",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0x54b56155f8659a99f23a56313054d6e9253f10f2914e4e439fbc40d0359b976c",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:30.845061",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:19.938194",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0x88d85b1e100e71ef13d83bee0298ea787e75755bc190583a830761224f98fd46",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: optimize soil health"
+                },
+                {
+                    "timestamp": "2026-08-09 19:40:19.921178",
+                    "session_id": "d5260541-1cf8-4ecf-b365-b0e4a73a46d7",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: optimize soil health"
+                }
+            ]
+        },
+        {
+            "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.034999999999999996,
+            "incoming_earnings_usdc": 0.025,
+            "net_cost_usdc": 0.009999999999999995,
+            "transaction_count": 8,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:39:17.806316",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:39:17.763819",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0x3b14a19f4633ea5d1de7253ab05608658fc1c4372b92326e9ca1e071367409c5",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:39:17.749587",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:38:58.710659",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "recipient": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "sampling_compute"
+                },
+                {
+                    "timestamp": "2026-08-09 19:38:58.625069",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0xd3e896fe6ea9544e1f25e68d3273ff409412eee8b10600e59cb20699e5f5b16a",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:38:58.608052",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:38:41.555006",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0xcee4b71396a504725ec66cfdd3c3f2b3a090e0630e859067ca34e157c7f6f083",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: optimize soil health"
+                },
+                {
+                    "timestamp": "2026-08-09 19:38:41.519369",
+                    "session_id": "2718dcca-09fd-4a4e-bc7b-23f2f2170c17",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: optimize soil health"
+                }
+            ]
+        },
+        {
+            "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.045,
+            "incoming_earnings_usdc": 0.045,
+            "net_cost_usdc": 0.0,
+            "transaction_count": 10,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:38:06.907690",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x0af99499277a4a7f589ec3318348121e0222710e779b6b3eed6f2afe0fa30e6e",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:38:06.889913",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:54.092275",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x6eb73d5d4aa268aaf1c27d82019fd8c93b0875b13f1d4577df1f54130c65e5d8",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:53.994573",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:46.972933",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0xa2e5caa77ef82079ec4e4bd41c5284ded4db673978be3a213d06ac573292b0d1",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:46.953878",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:31.640403",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0xdfd8754103f28b6f53224a6716ffa1c6ccd37d2bd0b4d58b5f909b870d23e939",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:30.809904",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.01,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "tool_invocation: reflect_on_answer"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:16.851409",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x31d2b538d1505605805f75fb04e0c23d99a95aae91083b31838c8fd29fc19027",
+                    "sender": "0xmockedpayer",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "incoming",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                },
+                {
+                    "timestamp": "2026-08-09 19:37:16.796371",
+                    "session_id": "ca609ff1-67f2-45a0-ac72-95ce1bcb59bd",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                }
+            ]
+        },
+        {
+            "session_id": "145384d1-4fbd-4f9f-a660-4a13736915f4",
+            "budget_limit_usdc": 0.05,
+            "total_spend_usdc": 0.01,
+            "incoming_earnings_usdc": 0.0,
+            "net_cost_usdc": 0.01,
+            "transaction_count": 2,
+            "compliance_status": "COMPLIANT",
+            "transactions": [
+                {
+                    "timestamp": "2026-08-09 19:36:18.163766",
+                    "session_id": "145384d1-4fbd-4f9f-a660-4a13736915f4",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                },
+                {
+                    "timestamp": "2026-08-09 19:35:47.955128",
+                    "session_id": "145384d1-4fbd-4f9f-a660-4a13736915f4",
+                    "tx_hash": "0x_pending_settlement",
+                    "sender": "0x6005C5BC0135e1ca680142fb2982A08E261c3431",
+                    "recipient": "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d",
+                    "amount_usdc": 0.005,
+                    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "network": "eip155:84532",
+                    "direction": "outgoing",
+                    "resource_or_tool": "resource_read: how can I optimize soil health?"
+                }
+            ]
+        }
+    ]
+}
