@@ -1,6 +1,6 @@
-# Agri Agent Stage 5 — Cloud-Persistent Storage & Distributed Multi-Tier Redis Caching
+# Agri Agent Stage 6 — Multi-Tenant x402 Interception, Algorithmic FinOps Governance, and Live Streamlit Upgrades
 
-A production-grade, multi-agent diagnostic system extending the Stage 4 MCP agricultural advisory agent with dynamic connection-pooled PostgreSQL storage (Supabase), pgvector similarity searches, and distributed multi-tier Redis caching (semantic client cache, explainability cache, and UI optimization cache.
+A production-grade, multi-agent diagnostic system extending the Stage 5 MCP agricultural advisory agent with active EIP-3009 x402 programmatic paywalls, Xpay relay integration, Algorithmic FinOps budget cap controls, Cosine semantic search CRAG + Tavily fallback, and a live Streamlit FinOps Governance telemetry center.
 
 ---
 
@@ -13,19 +13,23 @@ agri-agent/
 ├── README.md
 ├── REFLECTION_STAGE3.md
 ├── REFLECTION_STAGE4.md
-├── REFLECTION_STAGE5.md            ← Stage 5 conceptual analysis
+├── REFLECTION_STAGE5.md
+├── REFLECTION_STAGE6.md            ← Stage 6 conceptual analysis
 ├── migrate.py                      ← database migration script
 ├── cache_performance_audit.json    ← semantic cache audit record
 ├── explainability_audit_report.json ← compliance audit export
+├── finops_compliance_audit.json    ← FinOps payment compliance trace
 ├── mcp_agent_system.log            ← sample log from test execution
+├── uvd-x402-sdk-2.53.0.tgz         ← Ultravioleta x402 Javascript/Typescript SDK tarball
+├── package/                        ← Ultravioleta x402 SDK source code
 ├── mcp_server/
 │   ├── pyproject.toml
-│   ├── main.py                     ← FastMCP server
+│   ├── main.py                     ← FastMCP server (with x402 paywall protection)
 │   ├── knowledge_base.py           ← agricultural domain knowledge
 │   └── .env
 ├── agent_client/
 │   ├── pyproject.toml
-│   ├── main.py                     ← LangChain agent with Redis semantic cache
+│   ├── main.py                     ← LangChain agent (with paywall retries and budget cap check)
 │   └── .env
 └── analysis_dashboard/
     ├── pyproject.toml
@@ -223,6 +227,9 @@ Map session <session_id> to Neo4j
 | Web Fallback | Tavily Search API |
 | Dependency Management | uv workspace |
 | Transport | streamable-http |
+| Payment Protocol | x402 CAIP-2 eip155:84532 (Base Sepolia USDC) |
+| Payment Gateway | Xpay Staging Gateway / Facilitator |
+| Cryptography | `web3`, `eth-account` (EIP-3009 TransferWithAuthorization) |
 | Language | Python 3.14 |
 
 ---
@@ -235,6 +242,7 @@ Map session <session_id> to Neo4j
 | `mcp_agent_log.db` | SQLite vector store with structured log entries |
 | `analysis_dashboard/analysis_agent.log` | Log Analysis Agent execution log |
 | `explainability_audit_report.json` | High-fidelity JSON export containing SHAP/LIME calculations and Neo4j path context |
+| `finops_compliance_audit.json` | High-fidelity JSON export containing Stage 6 402 challenges, EIP-3009 signatures, and verified relayer transactions |
 
 ## Screenshots
 
@@ -258,3 +266,9 @@ Map session <session_id> to Neo4j
 ![Semantic Cache Audit Report](screenshots/cache2.png)
 ![Semantic Cache Audit Report](screenshots/cache3.png)
 ![Semantic Cache Audit Report](screenshots/cache4.png)
+
+### Terminal 6 — Agent with Budget Limit Exception
+![Agent with Budget Limit Exception](screenshots/FinOps-1.png)
+![Agent with Budget Limit Exception](screenshots/FinOps-2.png)
+![Agent with Budget Limit Exception](screenshots/FinOps-3.png)
+![Agent with Budget Limit Exception](screenshots/FinOps-4.png)

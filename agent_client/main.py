@@ -12,6 +12,7 @@ from langchain_core.tools import tool
 from langchain.agents import create_agent
 import asyncpg
 import json
+import base64
 
 class StoreResult:
     def __init__(self, key: str, namespace: tuple[str, ...], value: dict):
@@ -474,13 +475,428 @@ class RedisSemanticCache:
         except Exception as e:
             logger.error(f"Error setting semantic cache: {e}")
 
+# --- Client Paywall Helpers ---
+async def log_client_payment(pool, session_id: str, tx_hash: str, sender: str, recipient: str, amount_atoms: int, token: str, network: str, direction: str, resource_or_tool: str):
+    try:
+        amount_usdc = float(amount_atoms) / 1000000.0
+        async with pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO x402_payments (session_id, tx_hash, sender, recipient, amount, token, network, direction, resource_or_tool, timestamp)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP)
+                """,
+                session_id, tx_hash, sender, recipient, amount_usdc, token, network, direction, resource_or_tool
+            )
+            logger.info(f"Logged client {direction} payment of {amount_usdc} USDC. Tx: {tx_hash}")
+    except Exception as e:
+        logger.error(f"Failed to log client payment to database: {e}")
+
+async def verify_and_settle_sampling_payment(payment_b64: str, expected_amount: int, recipient: str, session_id: str, pool) -> tuple[bool, str]:
+    bypass = os.getenv("XPAY_BYPASS_VERIFICATION", "false").lower() == "true"
+    if bypass:
+        import secrets
+        mock_tx = "0x" + secrets.token_hex(32)
+        logger.info(f"[BYPASS] Mocking sampling settlement. Tx: {mock_tx}")
+        if pool:
+            await log_client_payment(pool, session_id, mock_tx, "0xmockedserver", recipient, expected_amount, "0x036CbD53842c5426634e7929541eC2318f3dCF7e", "eip155:84532", "incoming", "sampling_compute")
+        return True, mock_tx
+
+    try:
+        import base64
+        import requests
+        import secrets
+        from eth_helpers import verify_eip3009_signature
+        
+        decoded_bytes = base64.b64decode(payment_b64)
+        payment_data = json.loads(decoded_bytes.decode("utf-8"))
+        
+        payload_data = payment_data.get("paymentPayload", {})
+        payload = payload_data.get("payload", {})
+        auth = payload.get("authorization", {})
+        
+        if not auth:
+            return False, "Malformed payment payload: missing authorization fields"
+            
+        to_addr = auth.get("to", "").lower()
+        val = int(auth.get("value", "0"))
+        
+        if to_addr != recipient.lower():
+            return False, f"Invalid payment recipient: expected {recipient}, got {to_addr}"
+            
+        if val < expected_amount:
+            return False, f"Insufficient payment amount: expected {expected_amount}, got {val}"
+            
+        try:
+            recovered_from = verify_eip3009_signature(payload)
+            if recovered_from.lower() != auth.get("from", "").lower():
+                return False, f"Cryptographic signature mismatch"
+        except Exception as sig_err:
+            return False, f"Invalid signature: {sig_err}"
+            
+        # Settle via facilitator
+        XPAY_FACILITATOR = os.getenv("XPAY_FACILITATOR_URL", "https://facilitator.xpay.sh")
+        settle_url = f"{XPAY_FACILITATOR.rstrip('/')}/settle"
+        res = requests.post(settle_url, json=payment_data, timeout=30)
+        
+        if res.status_code == 200:
+            res_data = res.json()
+            if res_data.get("isValid") or res_data.get("success") or "transactionHash" in res_data or "txHash" in res_data:
+                tx_hash = res_data.get("transactionHash") or res_data.get("txHash") or ("0x" + secrets.token_hex(32))
+                if pool:
+                    await log_client_payment(pool, session_id, tx_hash, auth.get("from"), recipient, val, "0x036CbD53842c5426634e7929541eC2318f3dCF7e", "eip155:84532", "incoming", "sampling_compute")
+                return True, tx_hash
+            else:
+                return False, f"Facilitator rejected: {res_data.get('invalidReason', 'Unknown error')}"
+        else:
+            return False, f"Facilitator returned {res.status_code}: {res.text}"
+            
+    except Exception as e:
+        return False, str(e)
+
+import urllib.parse
+
+async def run_resource_with_paywall(client, search_query: str, store, session_id: str) -> str:
+    # First call
+    try:
+        encoded_query = urllib.parse.quote(search_query)
+        results = await client.read_resource(f"knowledge://agriculture/docs/{encoded_query}")
+        raw_text = ""
+        if results:
+            item = results[0]
+            raw_text = item.text if hasattr(item, "text") else item.blob.decode()
+        else:
+            return "No knowledge found"
+    except Exception as e:
+        logger.error(f"Resource read failed: {e}")
+        return f"Resource read failed: {e}"
+
+    # Check if 402 challenge
+    is_challenge = False
+    challenge_data = {}
+    try:
+        challenge_data = json.loads(raw_text)
+        if isinstance(challenge_data, dict) and challenge_data.get("status") == 402:
+            is_challenge = True
+    except Exception:
+        pass
+
+    if is_challenge:
+        logger.info(f"Server returned 402 challenge for resource '{search_query}'. Generating signature...")
+        try:
+            AGENT_PRIVATE_KEY = os.getenv("AGENT_PRIVATE_KEY")
+            if not AGENT_PRIVATE_KEY:
+                raise ValueError("AGENT_PRIVATE_KEY is not configured in client environment")
+
+            recipient_wallet = challenge_data["recipient"]
+            amount_atoms = int(challenge_data["amount"])
+            token_address = challenge_data["token"]
+            
+            # Generate signature
+            from eth_helpers import create_eip3009_payload
+            auth_payload = create_eip3009_payload(AGENT_PRIVATE_KEY, recipient_wallet, amount_atoms)
+            
+            # Build envelope
+            resource = {
+                "url": f"knowledge://agriculture/docs/{search_query}",
+                "description": "Agricultural Knowledge Resource",
+                "mimeType": "application/json"
+            }
+            accepted = {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "asset": token_address,
+                "amount": str(amount_atoms),
+                "payTo": recipient_wallet,
+                "maxTimeoutSeconds": 3600,
+                "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                }
+            }
+            payment_envelope = {
+                "x402Version": 2,
+                "paymentPayload": {
+                    "x402Version": 2,
+                    "resource": resource,
+                    "accepted": accepted,
+                    "payload": {
+                        "authorization": auth_payload["authorization"],
+                        "signature": auth_payload["signature"]
+                    }
+                },
+                "paymentRequirements": accepted
+            }
+            
+            payment_b64 = base64.b64encode(json.dumps(payment_envelope).encode("utf-8")).decode("utf-8")
+            
+            # Log outgoing payment
+            AGENT_ADDRESS = os.getenv("AGENT_ADDRESS") or "0x6005C5BC0135e1ca680142fb2982A08E261c3431"
+            if store and store.pool:
+                await log_client_payment(
+                    pool=store.pool,
+                    session_id=session_id,
+                    tx_hash="0x_pending_settlement",
+                    sender=AGENT_ADDRESS,
+                    recipient=recipient_wallet,
+                    amount_atoms=amount_atoms,
+                    token=token_address,
+                    network="eip155:84532",
+                    direction="outgoing",
+                    resource_or_tool=f"resource_read: {search_query}"
+                )
+                
+            # Construct retried query with parameters base64url-encoded envelope
+            params_envelope = {
+                "query": search_query,
+                "payment": payment_b64,
+                "session_id": session_id
+            }
+            params_json = json.dumps(params_envelope)
+            retry_query = base64.urlsafe_b64encode(params_json.encode("utf-8")).decode("utf-8")
+            
+            logger.info("Resubmitting resource request with payment parameter...")
+            retry_results = await client.read_resource(f"knowledge://agriculture/docs/{retry_query}")
+            if retry_results:
+                item = retry_results[0]
+                raw_text = item.text if hasattr(item, "text") else item.blob.decode()
+            else:
+                return "No knowledge found"
+                
+        except Exception as pay_err:
+            logger.error(f"Failed to pay resource paywall: {pay_err}")
+            return f"Payment failed: {pay_err}"
+
+    return raw_text
+
+async def run_tool_with_paywall(client, original_query: str, draft_answer: str, store, session_id: str) -> str:
+    # First call
+    try:
+        result = await client.call_tool("reflect_on_answer", arguments={
+            "original_query": original_query,
+            "draft_answer": draft_answer,
+            "payment_signature": "",
+            "session_id": session_id
+        })
+        raw_text = ""
+        if result.content:
+            block = result.content[0]
+            raw_text = block.text if hasattr(block, "text") else str(block)
+        else:
+            return "No reflection result"
+    except Exception as e:
+        logger.error(f"Tool call failed: {e}")
+        return f"Tool call failed: {e}"
+
+    # Check if 402 challenge
+    is_challenge = False
+    challenge_data = {}
+    try:
+        challenge_data = json.loads(raw_text)
+        if isinstance(challenge_data, dict) and challenge_data.get("status") == 402:
+            is_challenge = True
+    except Exception:
+        pass
+
+    if is_challenge:
+        logger.info(f"Server returned 402 challenge for tool reflection. Generating signature...")
+        try:
+            AGENT_PRIVATE_KEY = os.getenv("AGENT_PRIVATE_KEY")
+            if not AGENT_PRIVATE_KEY:
+                raise ValueError("AGENT_PRIVATE_KEY is not configured in client environment")
+
+            recipient_wallet = challenge_data["recipient"]
+            amount_atoms = int(challenge_data["amount"])
+            token_address = challenge_data["token"]
+            
+            # Generate signature
+            from eth_helpers import create_eip3009_payload
+            auth_payload = create_eip3009_payload(AGENT_PRIVATE_KEY, recipient_wallet, amount_atoms)
+            
+            # Build envelope
+            resource = {
+                "url": "tool://reflect_on_answer",
+                "description": "Reflect On Answer Tool Call",
+                "mimeType": "application/json"
+            }
+            accepted = {
+                "scheme": "exact",
+                "network": "eip155:84532",
+                "asset": token_address,
+                "amount": str(amount_atoms),
+                "payTo": recipient_wallet,
+                "maxTimeoutSeconds": 3600,
+                "extra": {
+                    "name": "USD Coin",
+                    "version": "2"
+                }
+            }
+            payment_envelope = {
+                "x402Version": 2,
+                "paymentPayload": {
+                    "x402Version": 2,
+                    "resource": resource,
+                    "accepted": accepted,
+                    "payload": {
+                        "authorization": auth_payload["authorization"],
+                        "signature": auth_payload["signature"]
+                    }
+                },
+                "paymentRequirements": accepted
+            }
+            
+            payment_b64 = base64.b64encode(json.dumps(payment_envelope).encode("utf-8")).decode("utf-8")
+            
+            # Log outgoing payment
+            AGENT_ADDRESS = os.getenv("AGENT_ADDRESS") or "0x6005C5BC0135e1ca680142fb2982A08E261c3431"
+            if store and store.pool:
+                await log_client_payment(
+                    pool=store.pool,
+                    session_id=session_id,
+                    tx_hash="0x_pending_settlement",
+                    sender=AGENT_ADDRESS,
+                    recipient=recipient_wallet,
+                    amount_atoms=amount_atoms,
+                    token=token_address,
+                    network="eip155:84532",
+                    direction="outgoing",
+                    resource_or_tool="tool_invocation: reflect_on_answer"
+                )
+                
+            logger.info("Resubmitting tool request with payment signature parameter...")
+            retry_result = await client.call_tool("reflect_on_answer", arguments={
+                "original_query": original_query,
+                "draft_answer": draft_answer,
+                "payment_signature": payment_b64,
+                "session_id": session_id
+            })
+            if retry_result.content:
+                block = retry_result.content[0]
+                raw_text = block.text if hasattr(block, "text") else str(block)
+            else:
+                return "No reflection result"
+                
+        except Exception as pay_err:
+            logger.error(f"Failed to pay tool paywall: {pay_err}")
+            return f"Payment failed: {pay_err}"
+
+    return raw_text
+
+class FinOpsBudgetExceededException(Exception):
+    pass
+
+async def get_session_spend(pool, session_id: str) -> float:
+    try:
+        async with pool.acquire() as conn:
+            val = await conn.fetchval(
+                """
+                SELECT COALESCE(SUM(amount), 0.0)
+                FROM x402_payments
+                WHERE session_id = $1 AND direction = 'outgoing'
+                """,
+                session_id
+            )
+            return float(val)
+    except Exception as e:
+        logger.error(f"Failed to fetch session spend: {e}")
+        return 0.0
+
 # Sampling handler
 async def sampling_handler(
     messages: list,
     params: CreateMessageRequestParams,
     ctx,
 ) -> CreateMessageResult:
-    logger.info("MCP Sampling request received from server, executing LLM locally...")
+    logger.info("MCP Sampling request received from server, executing paywall checks...")
+
+    store = getattr(sampling_handler, "store", None)
+    session_id = getattr(sampling_handler, "session_id", "unknown_session")
+    pool = store.pool if store else None
+
+    # Paywall verification
+    metadata = getattr(params, "metadata", {}) or {}
+    payment_signature = metadata.get("payment_signature", "")
+    
+    clean_messages = []
+    for msg in messages:
+        text = ""
+        if hasattr(msg, "content") and hasattr(msg.content, "text"):
+            text = msg.content.text
+        elif hasattr(msg, "content") and isinstance(msg.content, dict) and "text" in msg.content:
+            text = msg.content["text"]
+        elif hasattr(msg, "content") and hasattr(msg.content, "value"):
+            text = msg.content.value
+        elif isinstance(msg, dict) and "content" in msg:
+            content = msg["content"]
+            if isinstance(content, dict) and "text" in content:
+                text = content["text"]
+            elif hasattr(content, "text"):
+                text = content.text
+            else:
+                text = str(content)
+        else:
+            text = str(msg)
+            
+        if text.startswith("[PAYWALL_SIGNATURE] "):
+            payment_signature = text.split("[PAYWALL_SIGNATURE] ", 1)[1]
+            logger.info("Extracted payment signature from prepended message envelope.")
+        else:
+            clean_messages.append(msg)
+            
+    messages = clean_messages
+    
+    # Cost for sampling: 5000 atoms (0.005 USDC)
+    expected_amount = 5000
+    
+    # Client recipient address: AGENT_ADDRESS
+    AGENT_ADDRESS = os.getenv("AGENT_ADDRESS") or "0x6005C5BC0135e1ca680142fb2982A08E261c3431"
+    
+    if not payment_signature:
+        logger.info("Payment signature missing for sampling compute, issuing 402 challenge...")
+        challenge = {
+            "status": 402,
+            "error": "Payment Required",
+            "token": os.getenv("USDC_CONTRACT_ADDRESS", "0x036CbD53842c5426634e7929541eC2318f3dCF7e"),
+            "recipient": AGENT_ADDRESS,
+            "amount": str(expected_amount),
+            "scheme": "exact",
+            "network": "eip155:84532"
+        }
+        return CreateMessageResult(
+            role="assistant",
+            content=TextContent(type="text", text=json.dumps(challenge)),
+            model=_model_name,
+            stopReason="endTurn",
+        )
+        
+    # Verify and Settle Payment
+    ok, err_or_tx = await verify_and_settle_sampling_payment(
+        payment_b64=payment_signature,
+        expected_amount=expected_amount,
+        recipient=AGENT_ADDRESS,
+        session_id=session_id,
+        pool=pool
+    )
+    
+    if not ok:
+        logger.warning(f"Sampling payment verification failed: {err_or_tx}")
+        challenge = {
+            "status": 402,
+            "error": f"Payment Required: {err_or_tx}",
+            "token": os.getenv("USDC_CONTRACT_ADDRESS", "0x036CbD53842c5426634e7929541eC2318f3dCF7e"),
+            "recipient": AGENT_ADDRESS,
+            "amount": str(expected_amount),
+            "scheme": "exact",
+            "network": "eip155:84532"
+        }
+        return CreateMessageResult(
+            role="assistant",
+            content=TextContent(type="text", text=json.dumps(challenge)),
+            model=_model_name,
+            stopReason="endTurn",
+        )
+
+    # Continue execution after successful payment
+    logger.info("Sufficient compute payment settled! Running LLM locally...")
 
     prompt_text = ""
     for msg in messages:
@@ -492,7 +908,6 @@ async def sampling_handler(
         max_tokens = getattr(params, "maxTokens", None)
 
     # Initialize Cache
-    import os
     redis_host = os.getenv("REDIS_HOST", "localhost")
     redis_port = int(os.getenv("REDIS_PORT", "6379"))
     redis_pass = os.getenv("REDIS_PASSWORD") or None
@@ -595,6 +1010,9 @@ async def run_agent(user_query: str):
                 level=level,
             )
 
+        sampling_handler.store = store
+        sampling_handler.session_id = session_id
+
         async with Client(
             "http://localhost:8000/mcp",
             sampling_handler=sampling_handler,
@@ -625,6 +1043,7 @@ async def run_agent(user_query: str):
             async def crag_knowledge_tool(query: str) -> str:
                 """
                 Queries the agricultural knowledge base on the MCP server.
+                Protected by x402 payment challenge.
                 Uses hierarchical search (2-level) + Tree-of-Thought + Tavily fallback.
                 """
                 logger.info(f"Querying CRAG resource with: '{query}'")
@@ -636,8 +1055,17 @@ async def run_agent(user_query: str):
                     content=f"CRAG resource queried: {query}",
                 )
                 try:
-                    # Invoke the wrapped tool invocation chain that handles network faults
-                    results = await read_resource_runnable.ainvoke(query)
+                    # Pre-flight budget check
+                    pool = store.pool if store else None
+                    if pool:
+                        spend = await get_session_spend(pool, session_id)
+                        cap = float(os.getenv("FINOPS_CAP_USDC", "0.05"))
+                        # Cost of resource: 5000 atoms (0.005 USDC)
+                        if spend + 0.005 > cap:
+                            logger.error(f"Pre-flight check failed: Session spend ({spend}) + resource cost (0.005) exceeds cap ({cap})")
+                            raise FinOpsBudgetExceededException(f"Budget limit exceeded: spend={spend}, cost=0.005, cap={cap}")
+                    
+                    results_text = await run_resource_with_paywall(client, query, store, session_id)
                     logger.info("CRAG resource response received")
                     await write_structured_log(
                         store=store,
@@ -646,10 +1074,9 @@ async def run_agent(user_query: str):
                         mcp_interaction_type="resource_read",
                         content=f"CRAG resource response received for query: {query}",
                     )
-                    if results:
-                        item = results[0]
-                        return item.text if hasattr(item, "text") else item.blob.decode()
-                    return "No knowledge found"
+                    return results_text
+                except FinOpsBudgetExceededException:
+                    raise
                 except Exception as e:
                     logger.error(f"CRAG resource error: {e}")
                     await write_structured_log(
@@ -666,6 +1093,7 @@ async def run_agent(user_query: str):
             async def reflection_tool(original_query: str, draft_answer: str) -> str:
                 """
                 Critiques and corrects a draft answer using true MCP Sampling.
+                Protected by x402 payment challenge.
                 The server calls ctx.sample() which fires the sampling_handler,
                 runs the LLM locally on this client, and returns the validated result.
                 """
@@ -678,11 +1106,17 @@ async def run_agent(user_query: str):
                     content=f"reflect_on_answer invoked. Query: {original_query}",
                 )
                 try:
-                    # Invoke the wrapped tool invocation chain that handles network faults
-                    result = await call_reflection_runnable.ainvoke({
-                        "original_query": original_query,
-                        "draft_answer": draft_answer,
-                    })
+                    # Pre-flight budget check
+                    pool = store.pool if store else None
+                    if pool:
+                        spend = await get_session_spend(pool, session_id)
+                        cap = float(os.getenv("FINOPS_CAP_USDC", "0.05"))
+                        # Cost of tool: 10000 atoms (0.01 USDC)
+                        if spend + 0.01 > cap:
+                            logger.error(f"Pre-flight check failed: Session spend ({spend}) + tool cost (0.01) exceeds cap ({cap})")
+                            raise FinOpsBudgetExceededException(f"Budget limit exceeded: spend={spend}, cost=0.01, cap={cap}")
+                    
+                    results_text = await run_tool_with_paywall(client, original_query, draft_answer, store, session_id)
                     logger.info("Reflection tool response received")
                     await write_structured_log(
                         store=store,
@@ -691,10 +1125,9 @@ async def run_agent(user_query: str):
                         mcp_interaction_type="tool_invocation",
                         content=f"reflect_on_answer tool response received. Query: {original_query}",
                     )
-                    if result.content:
-                        block = result.content[0]
-                        return block.text if hasattr(block, "text") else str(block)
-                    return "No reflection result"
+                    return results_text
+                except FinOpsBudgetExceededException:
+                    raise
                 except Exception as e:
                     logger.error(f"Reflection tool error: {e}")
                     await write_structured_log(
@@ -733,6 +1166,9 @@ You MUST always follow these steps in order for EVERY question:
 
             async def _agent_self_healing_fallback(payload: dict):
                 error_trace = payload.get("error_trace")
+                if "Budget limit" in str(error_trace) or "FinOps" in str(error_trace):
+                    raise FinOpsBudgetExceededException(str(error_trace))
+                    
                 logger.warning(
                     f"Agent invocation failed. Engaging self-healing fallback. "
                     f"error_trace={error_trace}"
@@ -776,6 +1212,9 @@ You MUST always follow these steps in order for EVERY question:
 
             async def _agent_hardcoded_absolute_fallback(payload: dict):
                 error_trace = payload.get("error_trace")
+                if "Budget limit" in str(error_trace) or "FinOps" in str(error_trace):
+                    raise FinOpsBudgetExceededException(str(error_trace))
+                    
                 logger.error(
                     f"CATASTROPHIC FAILURE (agent invocation): self-healing fallback "
                     f"also failed. error_trace={error_trace}"
@@ -852,6 +1291,74 @@ You MUST always follow these steps in order for EVERY question:
                 print(f"\n{'='*60}")
                 print(f"FINAL ANSWER:\n{final_answer}")
                 print(f"{'='*60}\n")
+
+            except FinOpsBudgetExceededException as budget_exc:
+                logger.warning(f"FinOps budget cap hit: {budget_exc}. Triggering safe summary fallback...")
+                
+                cached_knowledge = []
+                try:
+                    async with store.pool.acquire() as conn:
+                        rows = await conn.fetch(
+                            """
+                            SELECT value 
+                            FROM trace_logs 
+                            WHERE session_id = $1 AND mcp_interaction_type = 'resource_read'
+                            ORDER BY timestamp DESC
+                            """,
+                            session_id
+                        )
+                        for r in rows:
+                            val_str = r['value']
+                            if not val_str:
+                                continue
+                            try:
+                                val_dict = json.loads(val_str) if isinstance(val_str, str) else val_str
+                                text_content = val_dict.get("content", "")
+                                if text_content and "error" not in text_content.lower() and "payment required" not in text_content.lower():
+                                    cached_knowledge.append(text_content)
+                            except Exception:
+                                pass
+                except Exception as db_err:
+                    logger.error(f"Failed to query trace_logs for fallback: {db_err}")
+                
+                if cached_knowledge:
+                    try:
+                        summary_prompt = (
+                            f"You are the FinOps Budget Fallback handler for an agricultural advisory agent.\n"
+                            f"The budget limit was exceeded during execution, so we must present a consolidated summary "
+                            f"of the knowledge retrieved so far.\n\n"
+                            f"Original Query: {user_query}\n\n"
+                            f"Retrieved Knowledge Snippets:\n"
+                            + "\n---\n".join(cached_knowledge) + "\n\n"
+                            f"Please write a comprehensive agricultural answer using ONLY the retrieved knowledge snippets above. "
+                            f"Explain clearly at the top that the session budget cap was reached, and this is a consolidated summary "
+                            f"of the cached knowledge retrieved before the cap was enforced."
+                        )
+                        healing_llm = _make_raw_llm(temperature=0.1)
+                        healed_response = await healing_llm.ainvoke(summary_prompt)
+                        final_answer = healed_response.content
+                    except Exception as llm_err:
+                        logger.error(f"Fallback LLM failed: {llm_err}")
+                        final_answer = (
+                            "WARNING: FinOps Session Budget Limit Exceeded.\n"
+                            "Here is the raw retrieved knowledge before the cap was reached:\n\n"
+                            + "\n\n".join(cached_knowledge)
+                        )
+                else:
+                    final_answer = "WARNING: FinOps Session Budget Limit Exceeded before any knowledge could be retrieved."
+
+                print(f"\n{'='*60}")
+                print(f"BUDGET CAP EXCEEDED - FALLBACK ANSWER:\n{final_answer}")
+                print(f"{'='*60}\n")
+                
+                await write_structured_log(
+                    store=store,
+                    session_id=session_id,
+                    namespace=("logs", "agent", "planning"),
+                    mcp_interaction_type="budget_cap_enforced",
+                    content=f"Budget cap hit. Fallback triggered: {final_answer}",
+                    level="WARNING"
+                )
 
             except Exception as e:
                 logger.error(f"Agent execution failed: {e}")

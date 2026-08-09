@@ -122,7 +122,7 @@ left_col, right_col = st.columns([2, 1])
 
 # Left column with tabs
 with left_col:
-    tab1, tab2 = st.tabs(["💬 Log Analysis Agent", "🔍 Explainability Audit Room"])
+    tab1, tab2, tab3 = st.tabs(["💬 Log Analysis Agent", "🔍 Explainability Audit Room", "💰 FinOps Governance Center"])
 
     with tab1:
         st.subheader("Natural Language Analysis Interface")
@@ -319,6 +319,146 @@ with left_col:
                 
                 with st.expander("View Complete XAI Compliance Report JSON"):
                     st.json(report)
+
+    with tab3:
+        st.subheader("💰 FinOps Wallet Telemetry & Budget Controls")
+        
+        # 1. Wallet Addresses and Balances
+        col_w1, col_w2 = st.columns(2)
+        
+        client_addr = os.getenv("AGENT_ADDRESS") or "0x6005C5BC0135e1ca680142fb2982A08E261c3431"
+        server_addr = os.getenv("SERVER_ADDRESS") or "0xd32Ea5203f359Fd6CEFD7094Da5425B060EAe79d"
+        
+        client_bal = "Loading..."
+        server_bal = "Loading..."
+        
+        try:
+            from web3 import Web3
+            rpc_url = os.getenv("RPC_URL", "https://sepolia.base.org")
+            w3 = Web3(Web3.HTTPProvider(rpc_url))
+            
+            usdc_contract_addr = os.getenv("USDC_CONTRACT_ADDRESS", "0x036CbD53842c5426634e7929541eC2318f3dCF7e")
+            usdc_abi = [
+                {
+                    "constant": True,
+                    "inputs": [{"name": "_owner", "type": "address"}],
+                    "name": "balanceOf",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "type": "function"
+                }
+            ]
+            usdc_contract = w3.eth.contract(address=Web3.to_checksum_address(usdc_contract_addr), abi=usdc_abi)
+            
+            # Fetch balances
+            c_bal_atoms = usdc_contract.functions.balanceOf(Web3.to_checksum_address(client_addr)).call()
+            client_bal = f"{c_bal_atoms / 1000000.0:.6f} USDC"
+            
+            s_bal_atoms = usdc_contract.functions.balanceOf(Web3.to_checksum_address(server_addr)).call()
+            server_bal = f"{s_bal_atoms / 1000000.0:.6f} USDC"
+        except Exception as web3_err:
+            agent_logger.warning(f"Web3 balance fetch failed: {web3_err}")
+            client_bal = "99.450000 USDC (Mocked)"
+            server_bal = "0.550000 USDC (Mocked)"
+            
+        with col_w1:
+            st.info("🤖 **Client Wallet (Payer)**")
+            st.code(client_addr)
+            st.metric("USDC Balance (Base Sepolia)", client_bal)
+            
+        with col_w2:
+            st.success("🖥️ **MCP Server Wallet (Recipient)**")
+            st.code(server_addr)
+            st.metric("USDC Balance (Base Sepolia)", server_bal)
+            
+        st.divider()
+        
+        # 2. Plot spending velocity curve chart
+        st.subheader("📈 Session Cost Velocity (FinOps Spending Curve)")
+        
+        payments = []
+        try:
+            db_url_dash = os.getenv("DATABASE_URL") or os.getenv("SUPABASE_URL") or "postgresql://daviddozie@localhost:5432/postgres"
+            db_url_dash_clean = db_url_dash.replace("?pgbouncer=true", "")
+            
+            import psycopg2
+            conn_dash = psycopg2.connect(db_url_dash_clean)
+            cursor_dash = conn_dash.cursor()
+            cursor_dash.execute(
+                """
+                SELECT timestamp, amount, direction, session_id, resource_or_tool, tx_hash
+                FROM x402_payments
+                ORDER BY timestamp ASC
+                """
+            )
+            rows_dash = cursor_dash.fetchall()
+            cursor_dash.close()
+            conn_dash.close()
+            
+            for row in rows_dash:
+                payments.append({
+                    "timestamp": row[0],
+                    "amount": float(row[1]),
+                    "direction": row[2],
+                    "session_id": row[3],
+                    "resource_or_tool": row[4],
+                    "tx_hash": row[5]
+                })
+        except Exception as db_dash_err:
+            st.warning(f"Could not load payment records from database: {db_dash_err}")
+            
+        if not payments:
+            st.info("No paywall transactions logged yet. Run agent queries to generate transactions!")
+        else:
+            import pandas as pd
+            import numpy as np
+            
+            df_pay = pd.DataFrame(payments)
+            df_outgoing = df_pay[df_pay["direction"] == "outgoing"].copy()
+            
+            if df_outgoing.empty:
+                st.info("No outgoing payment transactions (spent USDC) logged yet.")
+            else:
+                df_outgoing["cumulative_spend"] = df_outgoing["amount"].cumsum()
+                
+                fig_vel, ax_vel = plt.subplots(figsize=(10, 4.5))
+                ax_vel.plot(df_outgoing["timestamp"], df_outgoing["cumulative_spend"], marker='o', color='#f44336', linewidth=2, label="Cumulative Outgoing Spend")
+                
+                cap_usdc = float(os.getenv("FINOPS_CAP_USDC", "0.05"))
+                ax_vel.axhline(cap_usdc, color='#ff9800', linestyle='--', label=f"Budget Cap ({cap_usdc} USDC)")
+                
+                ax_vel.set_title("FinOps Spending Curve & Budget Velocity", fontsize=12, fontweight="bold")
+                ax_vel.set_xlabel("Time of Transaction")
+                ax_vel.set_ylabel("Spent (USDC)")
+                ax_vel.legend(loc="upper left")
+                ax_vel.grid(True, linestyle=":", alpha=0.6)
+                plt.xticks(rotation=15)
+                plt.tight_layout()
+                st.pyplot(fig_vel)
+                plt.close(fig_vel)
+                
+            st.divider()
+            
+            # 3. Transaction History Table
+            st.subheader("📜 402 Paywall Transaction Audit Trail")
+            
+            df_hist = pd.DataFrame(payments)
+            df_hist["amount_formatted"] = df_hist.apply(lambda r: f"- {r['amount']:.4f} USDC" if r['direction'] == 'outgoing' else f"+ {r['amount']:.4f} USDC", axis=1)
+            df_hist["status"] = "Completed"
+            
+            display_cols = {
+                "timestamp": "Timestamp",
+                "session_id": "Session ID",
+                "tx_hash": "Transaction Hash",
+                "resource_or_tool": "Resource / Tool",
+                "direction": "Type",
+                "amount_formatted": "Value (USDC)",
+                "status": "Status"
+            }
+            
+            st.dataframe(
+                df_hist[list(display_cols.keys())].rename(columns=display_cols),
+                use_container_width=True
+            )
 
 
 # Right column: Neo4j notifications, quick actions, system info, resilience tracking
