@@ -20,8 +20,6 @@ agri-agent/
 ├── explainability_audit_report.json ← compliance audit export
 ├── finops_compliance_audit.json    ← FinOps payment compliance trace
 ├── mcp_agent_system.log            ← sample log from test execution
-├── uvd-x402-sdk-2.53.0.tgz         ← Ultravioleta x402 Javascript/Typescript SDK tarball
-├── package/                        ← Ultravioleta x402 SDK source code
 ├── mcp_server/
 │   ├── pyproject.toml
 │   ├── main.py                     ← FastMCP server (with x402 paywall protection)
